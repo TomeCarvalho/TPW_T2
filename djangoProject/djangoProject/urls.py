@@ -25,6 +25,13 @@ urlpatterns = [
     path('ws/groups/<int:i>', views.get_group),
     path('ws/products', views.get_products),
     path('ws/products/<int:i>', views.get_product),
+    path('ws/productimages', views.get_product_images),
+    path('ws/productimages/<int:i>', views.get_product_image),
+    path('ws/sales', views.get_sales),
+    path('ws/sales/<int:i>', views.get_sale),
+    path('ws/productinstances', views.get_product_instances),
+    path('ws/productinstances/<int:i>', views.get_product_instance),
+
     # path('products/<int:i>', views.product_page),
     # path('', views.index),
     # path('login/', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
