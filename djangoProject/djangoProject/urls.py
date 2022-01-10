@@ -21,7 +21,10 @@ from app import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('ws/groups', views.get_groups)
+    path('ws/groups', views.get_groups),
+    path('ws/groups/<int:i>', views.get_group),
+    path('ws/products', views.get_products),
+    path('ws/products/<int:i>', views.get_product),
     # path('products/<int:i>', views.product_page),
     # path('', views.index),
     # path('login/', auth_views.LoginView.as_view(template_name='login.html'), name='login'),

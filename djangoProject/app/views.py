@@ -20,15 +20,104 @@ from app.serializers import GroupSerializer, ProductSerializer, ProductImageSeri
 
 
 @api_view(['GET'])
+def get_group(request, i):
+    """Get a group by ID (404 if it doesn't exist)."""
+    try:
+        group = Group.objects.get(id=i)
+    except Group.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    return Response(GroupSerializer(group).data)
+
+
+@api_view(['GET'])
 def get_groups(request):
+    """Get the list of groups."""
     groups = Group.objects.all()
     if 'num' in request.GET:
         num = int(request.GET['num'])
         groups = groups[:num]
-    serializer = GroupSerializer(groups, many=True)
-    return Response(serializer.data)
+    return Response(GroupSerializer(groups, many=True).data)
 
-# Create your views here.
+
+@api_view(['GET'])
+def get_product(request, i):
+    """Get a product by ID (404 if it doesn't exist)."""
+    try:
+        product = Product.objects.get(id=i)
+    except Product.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    return Response(ProductSerializer(product).data)
+
+
+@api_view(['GET'])
+def get_products(request):
+    """Get the list of products."""
+    products = Product.objects.all()
+    if 'num' in request.GET:
+        num = int(request.GET['num'])
+        products = products[:num]
+    return Response(ProductSerializer(products, many=True).data)
+
+
+@api_view(['GET'])
+def get_product_image(request, i):
+    """Get a product image by ID (404 if it doesn't exist)."""
+    try:
+        product_image = ProductImage.objects.get(id=i)
+    except ProductImage.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    return Response(ProductImageSerializer(product_image).data)
+
+
+@api_view(['GET'])
+def get_product_images(request):
+    """Get the list of product images."""
+    product_images = ProductImage.objects.all()
+    if 'num' in request.GET:
+        num = int(request.GET['num'])
+        product_images = product_images[:num]
+    return Response(ProductImageSerializer(product_images, many=True).data)
+
+
+@api_view(['GET'])
+def get_sale(request, i):
+    """Get a sale by ID (404 if it doesn't exist)."""
+    try:
+        sale = Sale.objects.get(id=i)
+    except Sale.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    return Response(SaleSerializer(sale).data)
+
+
+@api_view(['GET'])
+def get_sales(request):
+    """Get the list of sales."""
+    sales = Sale.objects.all()
+    if 'num' in request.GET:
+        num = int(request.GET['num'])
+        sales = sales[:num]
+    return Response(SaleSerializer(sales, many=True).data)
+
+
+@api_view(['GET'])
+def get_product_instance(request, i):
+    """Get a product instance by ID (404 if it doesn't exist)."""
+    try:
+        product_instance = ProductInstance.objects.get(id=i)
+    except ProductInstance.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    return Response(ProductInstanceSerializer(product_instance).data)
+
+
+@api_view(['GET'])
+def get_product_instances(request):
+    """Get the list of product instances."""
+    product_instances = ProductInstance.objects.all()
+    if 'num' in request.GET:
+        num = int(request.GET['num'])
+        product_instances = product_instances[:num]
+    return Response(SaleSerializer(product_instances, many=True).data)
+
 # def index(request):
 #     return redirect(dashboard)
 #
