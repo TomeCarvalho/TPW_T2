@@ -27,7 +27,7 @@ urlpatterns = [
     path('ws/groups', views.get_groups),
     path('ws/groups/<int:i>', views.get_group),
     path('ws/products', views.get_products),
-    path('ws/products/<int:i>', views.get_product),
+    path('ws/products/<int:i>', views.ProductView.as_view()),
     path('ws/productimages', views.get_product_images),
     path('ws/productimages/<int:i>', views.get_product_image),
     path('ws/sales', views.get_sales),

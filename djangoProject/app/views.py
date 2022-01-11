@@ -144,6 +144,19 @@ class TestToken(APIView):
         return Response(status.HTTP_200_OK)
 
 
+class ProductView(APIView):
+    authentication_classes = [authentication.TokenAuthentication]
+
+    def get(self, request, i):
+        """Get a product through its ID.
+        Sucess status: 200 OK.
+        Failure status: 404 NOT FOUND."""
+        try:
+            return Response(ProductSerializer(Product.objects.get(id=i)).data, status=status.HTTP_200_OK)
+        except ObjectDoesNotExist:
+            return Response(status.HTTP_404_NOT_FOUND)
+
+
 class MyProducts(APIView):
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
@@ -168,10 +181,12 @@ class MyProducts(APIView):
         if lower:
             q &= Q(price__gte=lower)
         product_list = Product.objects.filter(q)
-        return Response(ProductSerializer(product_list, many=True).data)
+        return Response(ProductSerializer(product_list, many=True).data, status=status.HTTP_200_OK)
 
     def post(self, request):
-        """Add a new product."""
+        """Add a new product.
+        Sucess status: 201 CREATED.
+        Failure status: 400 BAD REQUEST."""
         form = ProductForm(request.data)
         if form.is_valid():
             category = form.cleaned_data['category']
@@ -194,7 +209,6 @@ class MyProducts(APIView):
             image.save()
             return Response(ProductSerializer(new_product).data, status=status.HTTP_201_CREATED)
         return Response(status.HTTP_400_BAD_REQUEST)
-
 
 # def dashboard(request):
 #     search_prompt = None
@@ -250,49 +264,9 @@ class MyProducts(APIView):
 #     }
 #     return render(request, "dashboard.html", tparams)
 #
-class ProductPage(APIView):
-    authentication_classes = [authentication.TokenAuthentication]
-
-    def get(self, request, i):
-        try:
-            product = Product.objects.get(id=i)
-            if product.hidden and not request.user.is_superuser:
-                return Response(status.HTTP_403_FORBIDDEN)
-            return Response(Pro)
-        except ObjectDoesNotExist:
-            return Response(status.HTTP_404_NOT_FOUND)
 
 #
-# def product_page(request, i, message=None):
-#     """Returns the page of the product with ID i if it exists, or an error page if not."""
-#     try:
-#         product = Product.objects.get(id=i)
-#         if product.hidden and not request.user.is_superuser:
-#             return redirect(dashboard)
-#         images = product.images
-#         groups = product.group.all()
-#         n = range(1, len(images))
-#         params = {
-#             'message': message,
-#             'category': product.category.capitalize(),
-#             'name': product.name,
-#             'stock': product.stock,
-#             'images': images,
-#             'n': n,
-#             'description': product.description,
-#             'price': product.price,
-#             'seller': product.seller,
-#             'i': i,
-#             'groups': groups,
-#             'logged': request.user.is_authenticated,
-#             'hidden': product.hidden,
-#             'hidden_toggle_text': 'Unhide Product' if product.hidden else 'Hide Product',
-#             'fa_icon': 'fa-eye' if product.hidden else 'fa-eye-slash'
-#         }
-#         return render(request, 'product_page.html', params)
-#     except ObjectDoesNotExist:
-#         return render(request, 'product_page_error.html', {'i': i})
-#
+
 #
 # NOT_ENOUGH_STOCK_MSG = 'The seller doesn\'t have enough of this product in stock at the moment.'
 # INVALID_QTY_MSG = 'Invalid quantity. It must be a positive number.'
