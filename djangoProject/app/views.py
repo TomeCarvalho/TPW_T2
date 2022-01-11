@@ -210,6 +210,7 @@ class MyProducts(APIView):
             return Response(ProductSerializer(new_product).data, status=status.HTTP_201_CREATED)
         return Response(status.HTTP_400_BAD_REQUEST)
 
+
 # def dashboard(request):
 #     search_prompt = None
 #     if request.method == 'POST':
@@ -272,209 +273,208 @@ class MyProducts(APIView):
 # INVALID_QTY_MSG = 'Invalid quantity. It must be a positive number.'
 # ADDED_MSG = 'Product added to cart!'
 #
-#
-# @login_required
-# def add_to_cart(request):
-#     """Adds a product to the cart. Requires the user to be logged in."""
-#     params = {'logged': request.user.is_authenticated}
-#     if request.method == 'POST':
-#         product_id = request.POST['product_id']
-#         quantity = request.POST['quantity']
-#     else:  # If a sneaky user types it into the URL bar
-#         return redirect(dashboard)
-#     try:
-#         quantity = int(quantity)
-#     except ValueError:
-#         print(f'ValueError with {product_id = }, {quantity = }')
-#         params['alert_class'] = 'alert-danger'
-#         params['text'] = INVALID_QTY_MSG
-#         return product_page(request, product_id, params)
-#         # return render(request, 'message.html', params)
-#     if quantity <= 0:
-#         print(f'Invalid Quantity with {quantity = }')
-#         params['alert_class'] = 'alert-danger'
-#         params['text'] = INVALID_QTY_MSG
-#         return product_page(request, product_id, params)
-#
-#     user = request.user
-#     product = Product.objects.get(id=product_id)
-#     try:  # Check if the user already has the product in their cart and thus is just increasing the quantity
-#         user_instance = ProductInstance.objects.get(client=user, product=product, sold=False)
-#         if user_instance.quantity + quantity > product.stock:
-#             print(
-#                 f'Not enough stock of {product.name} for {user.username} ({user_instance.quantity + quantity}/{product.stock})')
-#             params['alert_class'] = 'alert-warning'
-#             params['text'] = NOT_ENOUGH_STOCK_MSG
-#             return product_page(request, product_id, params)
-#         user_instance.quantity += quantity
-#         user_instance.save()
-#         print(f'Increased quantity of {product} in {user}\'s cart by {quantity}')
-#         params['alert_class'] = 'alert-success'
-#         params['text'] = ADDED_MSG
-#         return product_page(request, product_id, params)
-#     except ObjectDoesNotExist:
-#         if quantity > product.stock:
-#             params['alert_class'] = 'alert-warning'
-#             params['text'] = NOT_ENOUGH_STOCK_MSG
-#             return product_page(request, product_id, params)
-#         ProductInstance(
-#             product=product,
-#             quantity=quantity,
-#             client=user,
-#             sold=False
-#         ).save()
-#         print(f'Instance of product {product} added to {user}\'s cart')
-#
-#     params['alert_class'] = 'alert-success'
-#     params['text'] = ADDED_MSG
-#     return product_page(request, product_id, params)
-#
-#
-# def cart(request):
-#     logged = request.user.is_authenticated
-#     if logged:
-#         product_instance_list = ProductInstance.objects.filter(client=request.user, sold=False)
-#         total = 0
-#         for product in product_instance_list:
-#             total += product.product.price * product.quantity
-#         tparams = {
-#             "logged": logged,
-#             "prod_insts": product_instance_list,
-#             "total": total
-#         }
-#         return render(request, "cart.html", tparams)
-#     else:
-#         return redirect(dashboard)
-#
-#
-# def checkout(request):
-#     logged = request.user.is_authenticated
-#     if logged:
-#         if request.method == "POST":
-#             form = PaymentForm(request.POST)
-#             if form.is_valid():
-#                 print("ei")
-#                 prod_insts = ProductInstance.objects.filter(client=request.user, sold=False)
-#                 if any(prod_inst.quantity > prod_inst.product.stock for prod_inst in prod_insts):
-#                     return redirect(dashboard)  # TODO: handle this in a better fashion
-#                 payment_method = form.cleaned_data['card']
-#                 sale = Sale(client=request.user, paymentMethod=payment_method)
-#                 sale.save()
-#                 for prod_inst in prod_insts:
-#                     product = prod_inst.product
-#                     product.stock -= prod_inst.quantity
-#                     prod_inst.sold = True
-#                     prod_inst.sale = sale
-#                     prod_inst.save()
-#                     product.save()
-#                 sale.save()
-#                 return redirect(dashboard)
-#             else:
-#                 print("NEY")
-#         else:
-#             form = PaymentForm()
-#         tparams = {
-#             "logged": logged,
-#             "form": form,
-#         }
-#         return render(request, "payment.html", tparams)
-#     else:
-#         return redirect(dashboard)
-#
-#
-# @login_required
-# def history(request):
-#     """Returns the purchase and sale history of the user."""
-#     logged = request.user.is_authenticated
-#     user = request.user
-#     purchases = ProductInstance.objects.filter(client=user, sold=True).select_related()
-#     sales = ProductInstance.objects.filter(product__seller=user, sold=True).select_related()
-#     print(f'{purchases = }\n{sales = }')
-#     params = {
-#         'logged': logged,
-#         'purchases': purchases,
-#         'sales': sales
-#     }
-#     return render(request, 'history.html', params)
-#
-#
-# @login_required
-# def remove_from_cart(request):
-#     if request.method == 'POST':
-#         product_id = request.POST['productInstance']
-#     else:  # If a sneaky user types it into the URL bar
-#         return redirect(dashboard)
-#     ProductInstance.objects.filter(id=product_id).delete()
-#     return redirect(cart)
-#
-#
-# @login_required
-# def add_stock(request):
-#     """Increases the stock of a user's product"""
-#     if request.method == 'POST':
-#         product_id = request.POST['product_id']
-#         quantity = request.POST['stock']
-#     else:
-#         return redirect(dashboard)
-#     try:
-#         quantity = int(quantity)
-#     except ValueError:
-#         # messages.info(request, INVALID_QTY_MSG)
-#         print(f'ValueError with {product_id = }, {quantity = }')
-#         return redirect(dashboard)
-#     if quantity <= 0:
-#         # messages.info(request, INVALID_QTY_MSG)
-#         print(f'Invalid Quantity with {quantity = }')
-#         return redirect(dashboard)
-#     product = Product.objects.get(id=product_id)
-#     product.stock += quantity
-#     product.save()
-#     print(f'Stock of {product.name} increased by {quantity}')
-#     return redirect(product_page, product_id)
-#
-#
-# @login_required
-# def add_image(request):
-#     if request.method == 'POST':
-#         product_id = request.POST['product_id']
-#         image = request.POST['image']
-#     else:
-#         return redirect(dashboard)
-#     product = Product.objects.get(id=product_id)
-#     image = ProductImage(url=image, product=product)
-#     image.save()
-#     return redirect(product_page, product_id)
-#
-#
-# def add_group(request):
-#     if request.method == 'POST':
-#         product_id = request.POST['product_id']
-#         group = request.POST['group']
-#     else:
-#         return redirect(dashboard)
-#     if group in [grp.name for grp in Group.objects.all()]:
-#         real_group = Group.objects.get(name=group)
-#     else:
-#         real_group = Group(name=group)
-#         real_group.save()
-#     product = Product.objects.get(id=product_id)
-#     product.group.add(real_group)
-#     product.save()
-#     return redirect(product_page, product_id)
-#
-#
-# @user_passes_test(lambda user: user.is_superuser)
-# def product_hidden_toggle(request):
-#     """Hides/Unhides a product from users that aren't admins."""
-#     if request.method == 'POST':
-#         product_id = request.POST['product_id']
-#     else:
-#         return redirect(dashboard)
-#     product = Product.objects.get(id=product_id)
-#     product.hidden = not product.hidden
-#     product.save()
-#     return redirect(dashboard)
-#
-#
-# def message(request):
-#     return None
+class Cart(APIView):
+    authentication_classes = [authentication.TokenAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        """Get the product instances that the user's cart is composed of."""
+        # Total price calculation removed, Angular's job now
+        product_instance_list = ProductInstance.objects.filter(client=request.user, sold=False)
+        return Response(ProductInstanceSerializer(product_instance_list, many=True).data, status=status.HTTP_200_OK)
+
+
+class AddToCart(APIView):
+    authentication_classes = [authentication.TokenAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        """Add a product to the cart."""
+        product_id = request.POST['product_id']
+        quantity = request.POST['quantity']
+        try:
+            quantity = int(quantity)
+        except ValueError:
+            return Response(status.HTTP_400_BAD_REQUEST)
+        if quantity <= 0:
+            return Response(status.HTTP_400_BAD_REQUEST)
+
+        user = request.user
+        try:
+            product = Product.objects.get(id=product_id)
+        except ObjectDoesNotExist:
+            return Response(status.HTTP_400_BAD_REQUEST)
+        if product.seller == request.user:
+            return Response(status.HTTP_400_BAD_REQUEST)
+
+        try:  # Check if the user already has the product in their cart and thus is just increasing the quantity
+            user_instance = ProductInstance.objects.get(client=user, product=product, sold=False)
+            if user_instance.quantity + quantity > product.stock:
+                print(
+                    f'Not enough stock of {product.name} for {user.username} ({user_instance.quantity + quantity}/{product.stock})')
+                return Response(status.HTTP_400_BAD_REQUEST)
+            user_instance.quantity += quantity
+            user_instance.save()
+            print(f'Increased quantity of {product} in {user}\'s cart by {quantity}')
+            return Response(ProductInstanceSerializer(user_instance).data, status=status.HTTP_200_OK)
+        except ObjectDoesNotExist:
+            if quantity > product.stock:
+                return Response(status.HTTP_400_BAD_REQUEST)
+
+            product_instance = ProductInstance(
+                product=product,
+                quantity=quantity,
+                client=user,
+                sold=False
+            )
+            product_instance.save()
+            print(f'Instance of product {product} added to {user}\'s cart')
+
+        return Response(ProductInstanceSerializer(product_instance).data, status=status.HTTP_200_OK)
+
+
+class RemoveFromCart(APIView):
+    authentication_classes = [authentication.TokenAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+    def delete(self, request):
+        product_id = request.DELETE['productInstance']
+        prod_insts = ProductInstance.objects.filter(id=product_id)
+        if prod_insts:
+            prod_insts.delete()
+            return Response(status.HTTP_200_OK)
+        return Response(status.HTTP_400_BAD_REQUEST)
+
+
+class CartCheckout(APIView):
+    authentication_classes = [authentication.TokenAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        """Checkout: purchase the items in the cart.
+        Success status: 200 OK.
+        Failures status: 400 BAD REQUEST."""
+        form = PaymentForm(request.data)
+        if form.is_valid():
+            prod_insts = ProductInstance.objects.filter(client=request.user, sold=False)
+            if any(prod_inst.quantity > prod_inst.product.stock for prod_inst in prod_insts):
+                return Response(status.HTTP_400_BAD_REQUEST)
+            payment_method = form.cleaned_data['card']
+            sale = Sale(client=request.user, paymentMethod=payment_method)
+            sale.save()
+            for prod_inst in prod_insts:
+                product = prod_inst.product
+                product.stock -= prod_inst.quantity
+                prod_inst.sold = True
+                prod_inst.sale = sale
+                prod_inst.save()
+                product.save()
+            sale.save()
+            return Response(status.HTTP_200_OK)
+        else:
+            return Response(status.HTTP_400_BAD_REQUEST)
+
+
+class PurchaseHistory(APIView):
+    authentication_classes = [authentication.TokenAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        """Get the purchase history of the user."""
+        purchases = ProductInstance.objects.filter(client=request.user, sold=True).select_related()
+        return Response(ProductInstanceSerializer(purchases).data, status=status.HTTP_200_OK)
+
+
+class SaleHistory(APIView):
+    authentication_classes = [authentication.TokenAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        """Get the sale history of the user."""
+        sales = ProductInstance.objects.filter(product__seller=request.user, sold=True).select_related()
+        return Response(ProductInstanceSerializer(sales).data, status=status.HTTP_200_OK)
+
+
+class AddStock(APIView):
+    authentication_classes = [authentication.TokenAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        """Increases the stock of a user's product."""
+        product_id = request.POST['product_id']
+        quantity = request.POST['stock']
+        try:
+            quantity = int(quantity)
+        except ValueError:
+            print(f'ValueError with {product_id = }, {quantity = }')
+            return Response(status.HTTP_400_BAD_REQUEST)
+        if quantity <= 0:
+            print(f'Invalid Quantity with {quantity = }')
+            return Response(status.HTTP_400_BAD_REQUEST)
+        try:
+            product = Product.objects.get(id=product_id)
+        except ObjectDoesNotExist:
+            return Response(status.HTTP_400_BAD_REQUEST)
+        if product.seller != request.user:
+            return Response(status.HTTP_403_FORBIDDEN)
+        product.stock += quantity
+        product.save()
+        print(f'Stock of {product.name} increased by {quantity}')
+        return Response(ProductSerializer(product).data, status=status.HTTP_200_OK)
+
+
+class AddProductImage(APIView):
+    authentication_classes = [authentication.TokenAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        """Adds an image to a product."""
+        try:
+            product = Product.objects.get(id=request.POST['product_id'])
+        except ObjectDoesNotExist:
+            return Response(status.HTTP_404_NOT_FOUND)
+        if product.seller != request.user:
+            return Response(status.HTTP_403_FORBIDDEN)
+        ProductImage(url=request.POST['image'], product=product).save()
+        return Response(ProductSerializer(product).data, status=status.HTTP_200_OK)
+
+
+class AddProductGroup(APIView):
+    authentication_classes = [authentication.TokenAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        """Adds a group to a product.
+        Creates the group if it doesn't exist yet."""
+        try:
+            product = Product.objects.get(id=request.POST['product_id'])
+        except ObjectDoesNotExist:
+            return Response(status.HTTP_404_NOT_FOUND)
+        if product.seller != request.user:
+            return Response(status.HTTP_403_FORBIDDEN)
+
+        group = request.POST['group']
+        if group in [grp.name for grp in Group.objects.all()]:
+            real_group = Group.objects.get(name=group)
+        else:
+            real_group = Group(name=group)
+            real_group.save()
+        product.group.add(real_group)
+        product.save()
+        return Response(ProductSerializer(product).data, status=status.HTTP_200_OK)
+
+
+class ToggleProductVisibility(APIView):
+    authentication_classes = [authentication.TokenAuthentication]
+    permission_classes = [permissions.IsAdminUser]
+
+    def post(self, request):
+        """Toggles the visibility of a product.
+        Requires admin privileges."""
+        try:
+            product = Product.objects.get(id=request.POST['product_id'])
+        except ObjectDoesNotExist:
+            return Response(status.HTTP_404_NOT_FOUND)
+        product.hidden = not product.hidden
+        product.save()
+        return Response(ProductSerializer(product).data, status=status.HTTP_200_OK)
