@@ -382,7 +382,7 @@ class PurchaseHistory(APIView):
     def get(self, request):
         """Get the purchase history of the user."""
         purchases = ProductInstance.objects.filter(client=request.user, sold=True).select_related()
-        return Response(ProductInstanceSerializer(purchases).data, status=status.HTTP_200_OK)
+        return Response(ProductInstanceSerializer(purchases, many=True).data, status=status.HTTP_200_OK)
 
 
 class SaleHistory(APIView):
@@ -392,7 +392,7 @@ class SaleHistory(APIView):
     def get(self, request):
         """Get the sale history of the user."""
         sales = ProductInstance.objects.filter(product__seller=request.user, sold=True).select_related()
-        return Response(ProductInstanceSerializer(sales).data, status=status.HTTP_200_OK)
+        return Response(ProductInstanceSerializer(sales, many=True).data, status=status.HTTP_200_OK)
 
 
 class AddStock(APIView):
