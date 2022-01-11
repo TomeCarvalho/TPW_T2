@@ -145,12 +145,12 @@ class TestToken(APIView):
 
 
 class MyProducts(APIView):
-    """Get the list of the user's products.
-    Allows filtering by: group, category, upper price, lower price."""
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
+        """Get the list of the user's products.
+        Allows filtering by: group, category, upper price, lower price."""
         print(f'{request = }')
         req_get = request.GET
         group = req_get.get('group')
@@ -170,26 +170,32 @@ class MyProducts(APIView):
         product_list = Product.objects.filter(q)
         return Response(ProductSerializer(product_list, many=True).data)
 
-# def index(request):
-#     return redirect(dashboard)
-#
-#
-# @csrf_protect
-# def signup(request):
-#     if request.method == 'POST':
-#         form = SignUpForm(request.POST)
-#         if form.is_valid():
-#             form.save()
-#             username = form.cleaned_data.get('username')
-#             raw_password = form.cleaned_data.get('password1')
-#             user = authenticate(username=username, password=raw_password)
-#             login(request, user)
-#             return redirect(dashboard)
-#     else:
-#         form = SignUpForm()
-#     return render(request, 'signup.html', {'form': form, 'logged': request.user.is_authenticated})
-#
-#
+    def post(self, request):
+        """Add a new product."""
+        form = ProductForm(request.data)
+        if form.is_valid():
+            category = form.cleaned_data['category']
+            name = form.cleaned_data['name']
+            stock = form.cleaned_data['stock']
+            description = form.cleaned_data['description']
+            price = form.cleaned_data['price']
+            group = form.cleaned_data['group']
+            img = form.cleaned_data['image']
+            if group in [grp.name for grp in Group.objects.all()]:
+                real_group = Group.objects.get(name=group)
+            else:
+                real_group = Group(name=group)
+                real_group.save()
+            new_product = Product(category=category, name=name, stock=stock, description=description, price=price,
+                                  seller=request.user)
+            new_product.save()
+            new_product.group.add(real_group)
+            image = ProductImage(url=img, product=new_product)
+            image.save()
+            return Response(ProductSerializer(new_product).data, status=status.HTTP_201_CREATED)
+        return Response(status.HTTP_400_BAD_REQUEST)
+
+
 # def dashboard(request):
 #     search_prompt = None
 #     if request.method == 'POST':
@@ -244,41 +250,6 @@ class MyProducts(APIView):
 #     }
 #     return render(request, "dashboard.html", tparams)
 #
-#
-
-# def newproduct(request):
-#     if request.method == "POST":
-#         form = ProductForm(request.POST)
-#         print(request.POST)
-#         post = request.POST
-#         if form.is_valid():
-#             # processar dados e inserir na bd!
-#             category = form.cleaned_data['category']
-#             name = form.cleaned_data['name']
-#             stock = form.cleaned_data['stock']
-#             description = form.cleaned_data['description']
-#             price = form.cleaned_data['price']
-#             group = form.cleaned_data['group']
-#             img = form.cleaned_data['image']
-#             if group in [grp.name for grp in Group.objects.all()]:
-#                 real_group = Group.objects.get(name=group)
-#             else:
-#                 real_group = Group(name=group)
-#                 real_group.save()
-#             new_product = Product(category=category, name=name, stock=stock, description=description, price=price,
-#                                   seller=request.user)
-#             new_product.save()
-#             new_product.group.add(real_group)
-#             image = ProductImage(url=img, product=new_product)
-#             image.save()
-#             return redirect(dashboard)
-#     else:
-#         form = ProductForm()
-#
-#     return render(request, "newproduct.html", {
-#         "form": form,
-#         "logged": request.user.is_authenticated,
-#     })
 #
 #
 # def product_page(request, i, message=None):

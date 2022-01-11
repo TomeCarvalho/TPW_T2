@@ -35,7 +35,7 @@ urlpatterns = [
     path('ws/productinstances', views.get_product_instances),
     path('ws/productinstances/<int:i>', views.get_product_instance),
     path('ws/test_token', views.TestToken.as_view()),
-    path('ws/myproducts/', views.MyProducts.as_view())
+    path('ws/myproducts', views.MyProducts.as_view())
 
     # path('products/<int:i>', views.product_page),
     # path('', views.index),
