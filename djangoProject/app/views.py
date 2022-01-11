@@ -144,16 +144,31 @@ class TestToken(APIView):
         return Response(status.HTTP_200_OK)
 
 
-# TODO: API-ify the myproducts view
 class MyProducts(APIView):
+    """Get the list of the user's products.
+    Allows filtering by: group, category, upper price, lower price."""
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
         print(f'{request = }')
-        print(f'{request.GET.get("foo", "no foo :(")}')
-        return Response(status.HTTP_200_OK)
+        req_get = request.GET
+        group = req_get.get('group')
+        category = req_get.get('category')
+        upper = req_get.get('upper')
+        lower = req_get.get('lower')
+        q = Q(seller=request.user)
 
+        if group:
+            q &= Q(group__name=group)
+        if category:
+            q &= Q(category=category)
+        if upper:
+            q &= Q(price__lte=upper)
+        if lower:
+            q &= Q(price__gte=lower)
+        product_list = Product.objects.filter(q)
+        return Response(ProductSerializer(product_list, many=True).data)
 
 # def index(request):
 #     return redirect(dashboard)
@@ -230,47 +245,7 @@ class MyProducts(APIView):
 #     return render(request, "dashboard.html", tparams)
 #
 #
-# def myproducts(request):
-#     logged = request.user.is_authenticated
-#     search_prompt = None
-#     if not logged:
-#         return redirect(dashboard)
-#     if request.method == 'POST':
-#         form = SearchForm(request.POST)
-#         if form.is_valid():
-#             group = form.cleaned_data.get('by_group')
-#             category = form.cleaned_data.get('by_category')
-#             upper = form.cleaned_data.get('by_price_Upper')
-#             lower = form.cleaned_data.get('by_price_Lower')
-#             q = Q(seller=request.user)
-#
-#             if group:
-#                 q &= Q(group__name=group)
-#             if category:
-#                 q &= Q(category=category)
-#             if upper:
-#                 q &= Q(price__lte=upper)
-#             if lower:
-#                 q &= Q(price__gte=lower)
-#             product_list = Product.objects.filter(q)
-#     else:
-#         search_prompt = request.GET.get('search_prompt', '')
-#         form = SearchForm()
-#         if search_prompt:
-#             product_list = Product.objects.filter(name__icontains=search_prompt, seller=request.user)
-#         else:
-#             product_list = Product.objects.filter(seller=request.user)
-#     pgs = zip_longest(*(iter(product_list),) * 3)  # chunky!
-#     tparams = {
-#         "logged": logged,
-#         "three_page_group": pgs,
-#         "search_prompt": search_prompt,
-#         "form": form,
-#         "my_products_page": True
-#     }
-#     return render(request, "dashboard.html", tparams)
-#
-#
+
 # def newproduct(request):
 #     if request.method == "POST":
 #         form = ProductForm(request.POST)
