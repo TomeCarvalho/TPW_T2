@@ -4,6 +4,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
 from django.views.decorators.csrf import csrf_protect
 from rest_framework.authtoken.admin import User
+from rest_framework.views import APIView
 
 from .forms import SignUpForm, PaymentForm, SearchForm, ProductForm
 from django.shortcuts import render
@@ -14,7 +15,7 @@ from django.db.models import Q
 
 from itertools import zip_longest
 
-from rest_framework import status
+from rest_framework import status, authentication, permissions
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from app.serializers import GroupSerializer, ProductSerializer, ProductImageSerializer, SaleSerializer, \
@@ -131,6 +132,29 @@ def signup(request):
         return Response(serialized.data, status=status.HTTP_201_CREATED)
     else:
         return Response(serialized.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class TestToken(APIView):
+    """Test: Return OK status if logged in (using token in auth header)."""
+    authentication_classes = [authentication.TokenAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        print(f'{request.user = }')
+        return Response(status.HTTP_200_OK)
+
+
+# TODO: API-ify the myproducts view
+class MyProducts(APIView):
+    authentication_classes = [authentication.TokenAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        print(f'{request = }')
+        print(f'{request.GET.get("foo", "no foo :(")}')
+        return Response(status.HTTP_200_OK)
+
+
 # def index(request):
 #     return redirect(dashboard)
 #
