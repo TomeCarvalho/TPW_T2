@@ -250,7 +250,18 @@ class MyProducts(APIView):
 #     }
 #     return render(request, "dashboard.html", tparams)
 #
-#
+class ProductPage(APIView):
+    authentication_classes = [authentication.TokenAuthentication]
+
+    def get(self, request, i):
+        try:
+            product = Product.objects.get(id=i)
+            if product.hidden and not request.user.is_superuser:
+                return Response(status.HTTP_403_FORBIDDEN)
+            return Response(Pro)
+        except ObjectDoesNotExist:
+            return Response(status.HTTP_404_NOT_FOUND)
+
 #
 # def product_page(request, i, message=None):
 #     """Returns the page of the product with ID i if it exists, or an error page if not."""

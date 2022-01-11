@@ -30,6 +30,9 @@ class ProductImage(models.Model):
     url = models.URLField()
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return self.url
+
 
 class Sale(models.Model):
     client = models.ForeignKey(User, on_delete=models.CASCADE)
