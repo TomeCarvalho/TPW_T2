@@ -3,6 +3,8 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
 from django.views.decorators.csrf import csrf_protect
+from rest_framework.authtoken.admin import User
+
 from .forms import SignUpForm, PaymentForm, SearchForm, ProductForm
 from django.shortcuts import render
 from app.models import Group, Product, Sale, ProductInstance, ProductImage
@@ -16,7 +18,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from app.serializers import GroupSerializer, ProductSerializer, ProductImageSerializer, SaleSerializer, \
-    ProductInstanceSerializer
+    ProductInstanceSerializer, UserSerializer
 
 
 @api_view(['GET'])
@@ -118,6 +120,17 @@ def get_product_instances(request):
         product_instances = product_instances[:num]
     return Response(SaleSerializer(product_instances, many=True).data)
 
+
+@api_view(['POST'])
+def signup(request):
+    """Create a new user using a JSON like {"username": "sussus", "password": "amogus"}."""
+    serialized = UserSerializer(data=request.data)
+    if serialized.is_valid():
+        init_data = serialized.initial_data
+        User.objects.create_user(username=init_data['username'], password=init_data['password'])
+        return Response(serialized.data, status=status.HTTP_201_CREATED)
+    else:
+        return Response(serialized.errors, status=status.HTTP_400_BAD_REQUEST)
 # def index(request):
 #     return redirect(dashboard)
 #
