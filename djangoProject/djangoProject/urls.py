@@ -18,9 +18,11 @@ from django.contrib.auth import views as auth_views
 from django.urls import path
 
 from app import views
+from rest_framework.authtoken.views import obtain_auth_token
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('ws/api-token-auth/', obtain_auth_token),
     path('ws/groups', views.get_groups),
     path('ws/groups/<int:i>', views.get_group),
     path('ws/products', views.get_products),
