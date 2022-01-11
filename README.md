@@ -54,3 +54,20 @@ Note: All of the following endpoints are prefixed by `ws/`.
 | `add-product-group`         | **POST**: Adds a group to a user's product. *Requires login.* |
 | `toggle-product-visibility` | **POST**: Toggles the visibility of a product. *Requires login as an administrator.* |
 
+**API Endpoint Syntax Examples**
+
+| Endpoint                    | Examples                                                     |
+| --------------------------- | ------------------------------------------------------------ |
+| `token-auth`                | **POST**: `{"username": "admin", "password": "admin"}`. Response: `{"token": "cf85238fe99797fc0384bc653a73d6a746e5de7c"}` |
+| `signup`                    | **POST**: `{"username": "JohnDoe", "password": "Some_password1"}` |
+| `dashboard`                 | **GET** **URL**: `dashboard?lower=5&upper=15&category=pants` |
+| `my-products`               | **GET URL**: `my-products?lower=5&upper=15&category=pants`   |
+| `products/<int:i>`          | **GET URL**: `products/2`                                    |
+| `cart`                      | **DELETE**: Deletes a product's instances from the user's cart. **GET**: Gets the product instances that the user's cart is composed of. **POST**: Adds instances of a product to the cart. *Requires login.* |
+| `cart/checkout`             | **POST**: Purchases the items in the user's cart. *Requires login.* |
+| `history/purchases`         | **GET**: Gets the product instances related to the user's previous purchases. *Requires login.* |
+| `history/sales`             | **GET**: Gets the product instances related to the user's previous sales. *Requires login.* |
+| `add-product-stock`         | **POST**: Increases the stock of a user's product. *Requires login.* |
+| `add-product-img`           | **POST**: Adds an image to a user's product. *Requires login.* |
+| `add-product-group`         | **POST**: Adds a group to a user's product. *Requires login.* |
+| `toggle-product-visibility` | **POST**: Toggles the visibility of a product. *Requires login as an administrator.* |
