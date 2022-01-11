@@ -105,6 +105,8 @@ class Dashboard(APIView):
     authentication_classes = [authentication.TokenAuthentication]
 
     def get(self, request):
+        """Gets the products, excluding the user's own, if logged in.
+        Allows filtering and sorting: group, category, upper (price), lower (price), order."""
         req_get = request.GET
         group = req_get.get('group')
         category = req_get.get('category')
