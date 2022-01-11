@@ -1,125 +1,15 @@
-from django.contrib.auth.decorators import login_required, user_passes_test
-from django.http import HttpResponseRedirect, HttpResponse
-from django.shortcuts import render, redirect
-from django.contrib.auth import login, authenticate
-from django.views.decorators.csrf import csrf_protect
 from rest_framework.authtoken.admin import User
 from rest_framework.views import APIView
 
-from .forms import SignUpForm, PaymentForm, SearchForm, ProductForm
-from django.shortcuts import render
+from .forms import PaymentForm, ProductForm
 from app.models import Group, Product, Sale, ProductInstance, ProductImage
 from django.core.exceptions import ObjectDoesNotExist
-from django.contrib import messages
 from django.db.models import Q
-
-from itertools import zip_longest
 
 from rest_framework import status, authentication, permissions
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from app.serializers import GroupSerializer, ProductSerializer, ProductImageSerializer, SaleSerializer, \
-    ProductInstanceSerializer, UserSerializer
-
-
-@api_view(['GET'])
-def get_group(request, i):
-    """Get a group by ID (404 if it doesn't exist)."""
-    try:
-        group = Group.objects.get(id=i)
-    except Group.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
-    return Response(GroupSerializer(group).data)
-
-
-@api_view(['GET'])
-def get_groups(request):
-    """Get the list of groups."""
-    groups = Group.objects.all()
-    if 'num' in request.GET:
-        num = int(request.GET['num'])
-        groups = groups[:num]
-    return Response(GroupSerializer(groups, many=True).data)
-
-
-@api_view(['GET'])
-def get_product(request, i):
-    """Get a product by ID (404 if it doesn't exist)."""
-    try:
-        product = Product.objects.get(id=i)
-    except Product.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
-    return Response(ProductSerializer(product).data)
-
-
-@api_view(['GET'])
-def get_products(request):
-    """Get the list of products."""
-    products = Product.objects.all()
-    if 'num' in request.GET:
-        num = int(request.GET['num'])
-        products = products[:num]
-    return Response(ProductSerializer(products, many=True).data)
-
-
-@api_view(['GET'])
-def get_product_image(request, i):
-    """Get a product image by ID (404 if it doesn't exist)."""
-    try:
-        product_image = ProductImage.objects.get(id=i)
-    except ProductImage.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
-    return Response(ProductImageSerializer(product_image).data)
-
-
-@api_view(['GET'])
-def get_product_images(request):
-    """Get the list of product images."""
-    product_images = ProductImage.objects.all()
-    if 'num' in request.GET:
-        num = int(request.GET['num'])
-        product_images = product_images[:num]
-    return Response(ProductImageSerializer(product_images, many=True).data)
-
-
-@api_view(['GET'])
-def get_sale(request, i):
-    """Get a sale by ID (404 if it doesn't exist)."""
-    try:
-        sale = Sale.objects.get(id=i)
-    except Sale.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
-    return Response(SaleSerializer(sale).data)
-
-
-@api_view(['GET'])
-def get_sales(request):
-    """Get the list of sales."""
-    sales = Sale.objects.all()
-    if 'num' in request.GET:
-        num = int(request.GET['num'])
-        sales = sales[:num]
-    return Response(SaleSerializer(sales, many=True).data)
-
-
-@api_view(['GET'])
-def get_product_instance(request, i):
-    """Get a product instance by ID (404 if it doesn't exist)."""
-    try:
-        product_instance = ProductInstance.objects.get(id=i)
-    except ProductInstance.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
-    return Response(ProductInstanceSerializer(product_instance).data)
-
-
-@api_view(['GET'])
-def get_product_instances(request):
-    """Get the list of product instances."""
-    product_instances = ProductInstance.objects.all()
-    if 'num' in request.GET:
-        num = int(request.GET['num'])
-        product_instances = product_instances[:num]
-    return Response(SaleSerializer(product_instances, many=True).data)
+from app.serializers import ProductSerializer, ProductInstanceSerializer, UserSerializer
 
 
 @api_view(['POST'])
@@ -211,71 +101,57 @@ class MyProducts(APIView):
         return Response(status.HTTP_400_BAD_REQUEST)
 
 
-# def dashboard(request):
-#     search_prompt = None
-#     if request.method == 'POST':
-#         print(request.POST)
-#         form = SearchForm(request.POST)
-#         if form.is_valid():
-#             print("VALID")
-#             group = form.cleaned_data.get('by_group')
-#             category = form.cleaned_data.get('by_category')
-#             upper = form.cleaned_data.get('by_price_Upper')
-#             lower = form.cleaned_data.get('by_price_Lower')
-#             order = form.cleaned_data.get('order')
-#
-#             q = Q()
-#             if group:
-#                 q &= Q(group__name=group)
-#             if category:
-#                 q &= Q(category=category)
-#             if upper:
-#                 q &= Q(price__lte=upper)
-#             if lower:
-#                 q &= Q(price__gte=lower)
-#             if request.user.is_authenticated:
-#                 q &= ~Q(seller=request.user)
-#                 if not request.user.is_superuser:
-#                     q &= Q(hidden=False)
-#             else:
-#                 q &= Q(hidden=False)
-#             product_list = Product.objects.filter(q)
-#
-#             if order:
-#                 product_list = product_list.order_by(order)
-#         else:
-#             product_list = Product.objects.all()
-#     else:
-#         form = SearchForm()
-#         search_prompt = request.GET.get('search_prompt', '')
-#         product_list = Product.objects.filter(name__icontains=search_prompt) if search_prompt else Product.objects.all()
-#     if request.user.is_authenticated:
-#         product_list = product_list.exclude(seller=request.user)
-#         if not request.user.is_superuser:
-#             product_list = product_list.exclude(hidden=True)
-#     else:
-#         product_list = product_list.exclude(hidden=True)
-#
-#     pgs = zip_longest(*(iter(product_list),) * 3)  # chunky!
-#     tparams = {
-#         "logged": request.user.is_authenticated,
-#         "three_page_group": pgs,
-#         "search_prompt": search_prompt,
-#         "form": form
-#     }
-#     return render(request, "dashboard.html", tparams)
-#
+class Dashboard(APIView):
+    authentication_classes = [authentication.TokenAuthentication]
 
-#
+    def get(self, request):
+        req_get = request.GET
+        group = req_get.get('group')
+        category = req_get.get('category')
+        upper = req_get.get('upper')
+        lower = req_get.get('lower')
+        order = req_get.get('order')
+        q = Q()
 
-#
+        if group:
+            q &= Q(group__name=group)
+        if category:
+            q &= Q(category=category)
+        if upper:
+            q &= Q(price__lte=upper)
+        if lower:
+            q &= Q(price__gte=lower)
+
+        if request.user.is_authenticated:
+            q &= ~Q(seller=request.user)
+            if not request.user.is_superuser:
+                q &= Q(hidden=False)
+        else:
+            q &= Q(hidden=False)
+
+        product_list = Product.objects.filter(q)
+        if order:
+            product_list = product_list.order_by(order)
+
+        return Response(ProductSerializer(product_list, many=True).data, status=status.HTTP_200_OK)
+
+
 # NOT_ENOUGH_STOCK_MSG = 'The seller doesn\'t have enough of this product in stock at the moment.'
 # INVALID_QTY_MSG = 'Invalid quantity. It must be a positive number.'
 # ADDED_MSG = 'Product added to cart!'
-#
+
 class Cart(APIView):
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
+
+    def delete(self, request):
+        """Delete a product's instances from a cart."""
+        product_id = request.DELETE['productInstance']
+        prod_insts = ProductInstance.objects.filter(id=product_id)
+        if prod_insts:
+            prod_insts.delete()
+            return Response(status.HTTP_200_OK)
+        return Response(status.HTTP_400_BAD_REQUEST)
 
     def get(self, request):
         """Get the product instances that the user's cart is composed of."""
@@ -283,13 +159,8 @@ class Cart(APIView):
         product_instance_list = ProductInstance.objects.filter(client=request.user, sold=False)
         return Response(ProductInstanceSerializer(product_instance_list, many=True).data, status=status.HTTP_200_OK)
 
-
-class AddToCart(APIView):
-    authentication_classes = [authentication.TokenAuthentication]
-    permission_classes = [permissions.IsAuthenticated]
-
     def post(self, request):
-        """Add a product to the cart."""
+        """Add instances of a product to the cart."""
         product_id = request.POST['product_id']
         quantity = request.POST['quantity']
         try:
@@ -333,17 +204,7 @@ class AddToCart(APIView):
         return Response(ProductInstanceSerializer(product_instance).data, status=status.HTTP_200_OK)
 
 
-class RemoveFromCart(APIView):
-    authentication_classes = [authentication.TokenAuthentication]
-    permission_classes = [permissions.IsAuthenticated]
-
-    def delete(self, request):
-        product_id = request.DELETE['productInstance']
-        prod_insts = ProductInstance.objects.filter(id=product_id)
-        if prod_insts:
-            prod_insts.delete()
-            return Response(status.HTTP_200_OK)
-        return Response(status.HTTP_400_BAD_REQUEST)
+#
 
 
 class CartCheckout(APIView):
@@ -478,3 +339,163 @@ class ToggleProductVisibility(APIView):
         product.hidden = not product.hidden
         product.save()
         return Response(ProductSerializer(product).data, status=status.HTTP_200_OK)
+
+# class AddToCart(APIView):
+#     authentication_classes = [authentication.TokenAuthentication]
+#     permission_classes = [permissions.IsAuthenticated]
+#
+#     def post(self, request):
+#         """Add a product to the cart."""
+#         product_id = request.POST['product_id']
+#         quantity = request.POST['quantity']
+#         try:
+#             quantity = int(quantity)
+#         except ValueError:
+#             return Response(status.HTTP_400_BAD_REQUEST)
+#         if quantity <= 0:
+#             return Response(status.HTTP_400_BAD_REQUEST)
+#
+#         user = request.user
+#         try:
+#             product = Product.objects.get(id=product_id)
+#         except ObjectDoesNotExist:
+#             return Response(status.HTTP_400_BAD_REQUEST)
+#         if product.seller == request.user:
+#             return Response(status.HTTP_400_BAD_REQUEST)
+#
+#         try:  # Check if the user already has the product in their cart and thus is just increasing the quantity
+#             user_instance = ProductInstance.objects.get(client=user, product=product, sold=False)
+#             if user_instance.quantity + quantity > product.stock:
+#                 print(
+#                     f'Not enough stock of {product.name} for {user.username} ({user_instance.quantity + quantity}/{product.stock})')
+#                 return Response(status.HTTP_400_BAD_REQUEST)
+#             user_instance.quantity += quantity
+#             user_instance.save()
+#             print(f'Increased quantity of {product} in {user}\'s cart by {quantity}')
+#             return Response(ProductInstanceSerializer(user_instance).data, status=status.HTTP_200_OK)
+#         except ObjectDoesNotExist:
+#             if quantity > product.stock:
+#                 return Response(status.HTTP_400_BAD_REQUEST)
+#
+#             product_instance = ProductInstance(
+#                 product=product,
+#                 quantity=quantity,
+#                 client=user,
+#                 sold=False
+#             )
+#             product_instance.save()
+#             print(f'Instance of product {product} added to {user}\'s cart')
+#
+#         return Response(ProductInstanceSerializer(product_instance).data, status=status.HTTP_200_OK)
+#
+#
+# class RemoveFromCart(APIView):
+#     authentication_classes = [authentication.TokenAuthentication]
+#     permission_classes = [permissions.IsAuthenticated]
+#
+#     def delete(self, request):
+#         product_id = request.DELETE['productInstance']
+#         prod_insts = ProductInstance.objects.filter(id=product_id)
+#         if prod_insts:
+#             prod_insts.delete()
+#             return Response(status.HTTP_200_OK)
+#         return Response(status.HTTP_400_BAD_REQUEST)
+
+# @api_view(['GET'])
+# def get_group(request, i):
+#     """Get a group by ID (404 if it doesn't exist)."""
+#     try:
+#         group = Group.objects.get(id=i)
+#     except Group.DoesNotExist:
+#         return Response(status=status.HTTP_404_NOT_FOUND)
+#     return Response(GroupSerializer(group).data)
+
+
+# @api_view(['GET'])
+# def get_groups(request):
+#     """Get the list of groups."""
+#     groups = Group.objects.all()
+#     if 'num' in request.GET:
+#         num = int(request.GET['num'])
+#         groups = groups[:num]
+#     return Response(GroupSerializer(groups, many=True).data)
+
+
+# @api_view(['GET'])
+# def get_product(request, i):
+#     """Get a product by ID (404 if it doesn't exist)."""
+#     try:
+#         product = Product.objects.get(id=i)
+#     except Product.DoesNotExist:
+#         return Response(status=status.HTTP_404_NOT_FOUND)
+#     return Response(ProductSerializer(product).data)
+
+
+# @api_view(['GET'])
+# def get_products(request):
+#     """Get the list of products."""
+#     products = Product.objects.all()
+#     if 'num' in request.GET:
+#         num = int(request.GET['num'])
+#         products = products[:num]
+#     return Response(ProductSerializer(products, many=True).data)
+
+
+# @api_view(['GET'])
+# def get_product_image(request, i):
+#     """Get a product image by ID (404 if it doesn't exist)."""
+#     try:
+#         product_image = ProductImage.objects.get(id=i)
+#     except ProductImage.DoesNotExist:
+#         return Response(status=status.HTTP_404_NOT_FOUND)
+#     return Response(ProductImageSerializer(product_image).data)
+
+
+# @api_view(['GET'])
+# def get_product_images(request):
+#     """Get the list of product images."""
+#     product_images = ProductImage.objects.all()
+#     if 'num' in request.GET:
+#         num = int(request.GET['num'])
+#         product_images = product_images[:num]
+#     return Response(ProductImageSerializer(product_images, many=True).data)
+
+
+# @api_view(['GET'])
+# def get_sale(request, i):
+#     """Get a sale by ID (404 if it doesn't exist)."""
+#     try:
+#         sale = Sale.objects.get(id=i)
+#     except Sale.DoesNotExist:
+#         return Response(status=status.HTTP_404_NOT_FOUND)
+#     return Response(SaleSerializer(sale).data)
+
+
+# @api_view(['GET'])
+# def get_sales(request):
+#     """Get the list of sales."""
+#     sales = Sale.objects.all()
+#     if 'num' in request.GET:
+#         num = int(request.GET['num'])
+#         sales = sales[:num]
+#     return Response(SaleSerializer(sales, many=True).data)
+
+
+# @api_view(['GET'])
+# def get_product_instance(request, i):
+#     """Get a product instance by ID (404 if it doesn't exist)."""
+#     try:
+#         product_instance = ProductInstance.objects.get(id=i)
+#     except ProductInstance.DoesNotExist:
+#         return Response(status=status.HTTP_404_NOT_FOUND)
+#     return Response(ProductInstanceSerializer(product_instance).data)
+#
+#
+# @api_view(['GET'])
+# def get_product_instances(request):
+#     """Get the list of product instances."""
+#     product_instances = ProductInstance.objects.all()
+#     if 'num' in request.GET:
+#         num = int(request.GET['num'])
+#         product_instances = product_instances[:num]
+#     return Response(SaleSerializer(product_instances, many=True).data)
