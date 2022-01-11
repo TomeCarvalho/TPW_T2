@@ -4,7 +4,7 @@
 
 **Virtual Environment Creation and Activation**
 
-Inside the `djangoProject` directory, create the venv:
+In the repository's root directory, create the venv:
 
 `python -m venv venv`
 
@@ -16,7 +16,9 @@ Activate the venv:
 
 `.\venv\Scripts\activate`
 
+Install the requirements
 
+`pip install -r requirements.txt`
 
 **Application Execution**
 
