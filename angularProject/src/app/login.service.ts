@@ -11,10 +11,10 @@ const httpOptions = {
   providedIn: 'root'
 })
 export class LoginService {
-  private _token: string
+  private static _token: string
 
   constructor(private http: HttpClient) {
-    this._token = ""
+    LoginService._token = ""
   }
 
   login(username: string, password: string) {
@@ -26,14 +26,14 @@ export class LoginService {
     )
       .pipe(catchError(LoginService.handleError))
       .subscribe(data => {
-        this._token = data.token
-        console.log(`LoginService.login: Authentication request successful.\nToken: ${this.token}`)
+        LoginService._token = data.token
+        console.log(`LoginService.login: Authentication request successful.\nToken: ${LoginService.token}`)
         return data
       })
   }
 
   logout() {
-    this._token = ""
+    LoginService._token = ""
   }
 
   private static handleError(error: HttpErrorResponse) {
@@ -48,7 +48,7 @@ export class LoginService {
     return throwError(() => 'Whoops, something went wrong...');
   }
 
-  get token(): string {
-    return this._token;
+  public static get token(): string {
+    return LoginService._token;
   }
 }
