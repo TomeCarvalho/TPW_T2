@@ -1,6 +1,10 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.models import User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.conf import settings
+from rest_framework.authtoken.models import Token
 
 
 class Group(models.Model):
@@ -26,6 +30,9 @@ class ProductImage(models.Model):
     url = models.URLField()
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return self.url
+
 
 class Sale(models.Model):
     client = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -47,3 +54,10 @@ class ProductInstance(models.Model):
     @property
     def price(self):
         return self.product.price * self.quantity
+
+
+@receiver(post_save, sender=settings.AUTH_USER_MODEL)
+def create_auth_token(sender, instance=None, created=False, **kwargs):
+    """Automatically generate auth tokens for users."""
+    if created:
+        Token.objects.create(user=instance)

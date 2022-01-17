@@ -1,32 +1,55 @@
 from app.models import Group, Product, ProductImage, Sale, ProductInstance
 from rest_framework import serializers
+from django.contrib.auth import get_user_model
 
 
 class GroupSerializer(serializers.ModelSerializer):
     class Meta:
         model = Group
-        fields = ['id', 'name']
+        fields = '__all__'
 
 
 class ProductSerializer(serializers.ModelSerializer):
+    images = serializers.StringRelatedField(many=True)
+
     class Meta:
         model = Product
-        fields = ['id', 'category', 'name', 'stock', 'description', 'price', 'seller', 'group', 'hidden']
+        fields = '__all__'
 
 
 class ProductImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductImage
-        fields = ['id', 'url', 'product']
+        fields = '__all__'
 
 
 class SaleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Sale
-        fields = ['id', 'client, paymentMethod', 'date']
+        fields = '__all__'
 
 
 class ProductInstanceSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductInstance
-        fields = ['id', 'product', 'quantity', 'client', 'sale', 'sold']
+        fields = '__all__'
+
+
+UserModel = get_user_model()
+
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserModel
+        fields = '__all__'
+
+    password = serializers.CharField(write_only=True)
+
+    def create(self, validated_data):
+        user = UserModel.objects.create_user(
+            username=validated_data['username'],
+            password=validated_data['password'],
+        )
+        return user
+
+
