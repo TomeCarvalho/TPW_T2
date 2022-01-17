@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {environment} from "../environments/environment";
-import {HttpClient, HttpHeaders} from "@angular/common/http";
+import {HttpClient, HttpErrorResponse, HttpHeaders} from "@angular/common/http";
+import {catchError, throwError} from "rxjs";
 
 const httpOptions = {
   headers: new HttpHeaders({'Content-Type': 'application/json'})
@@ -10,10 +11,10 @@ const httpOptions = {
   providedIn: 'root'
 })
 export class LoginService {
-  token: string
+  private static _token: string
 
   constructor(private http: HttpClient) {
-    this.token = ""
+    LoginService._token = ""
   }
 
   login(username: string, password: string) {
@@ -22,18 +23,32 @@ export class LoginService {
       `${environment.apiUrl}/token-auth`,
       {"username": username, "password": password},
       httpOptions
-    ).subscribe(data => {
-      if (data.status == 200) {
-        console.log(`LoginService.login: Authentication request successful (token: ${data.token}).`)
-        this.token = data.token
-      } else { // 400 Bad Request
-        console.log(`LoginService.login: Authentication request unsuccessful: ${data.non_field_errors}`)
-      }
-      return data
-    })
+    )
+      .pipe(catchError(LoginService.handleError))
+      .subscribe(data => {
+        LoginService._token = data.token
+        console.log(`LoginService.login: Authentication request successful.\nToken: ${LoginService.token}`)
+        return data
+      })
   }
 
   logout() {
-    this.token = ""
+    LoginService._token = ""
+  }
+
+  private static handleError(error: HttpErrorResponse) {
+    if (error.status === 0)
+      // A client-side or network error occurred. Handle it accordingly.
+      console.error(`An error occurred: ${error.error}.`);
+    else
+      // The backend returned an unsuccessful response code. The response body may contain clues as to what went wrong.
+      console.error(`Backend returned code ${error.status}, body was: ${error.error}.`);
+
+    // Return an observable with a user-facing error message.
+    return throwError(() => 'Whoops, something went wrong...');
+  }
+
+  public static get token(): string {
+    return LoginService._token;
   }
 }
