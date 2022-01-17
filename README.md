@@ -62,7 +62,7 @@ Note: All of the following endpoints are prefixed by `ws/`.
 | `signup`                    | **POST**: `{"username": "JohnDoe", "password": "Some_password1"}` |
 | `dashboard`                 | **GET** **URL**: `dashboard?lower=5&upper=15&category=pants` |
 | `my-products`               | **GET URL**: `my-products?lower=5&upper=15&category=pants`   |
-| `products/<int:i>`          | **GET URL**: `products/2`                                    |
+| `products/<int:i>`          | **GET URL**: `products/2`. Response: `{"id":2,"images":["https://www.gravatar.com/avatar/347f3d29510817b155ea61107affafe3?s=48&d=identicon&r=PG&f=1"],"category":"Underwear","name":"underwear name","stock":1,"description":"underwear description","price":2.99,"hidden":false,"seller":1,"group":[3]}` |
 | `cart`                      | **DELETE**: Deletes a product's instances from the user's cart. **GET**: Gets the product instances that the user's cart is composed of. **POST**: Adds instances of a product to the cart. *Requires login.* |
 | `cart/checkout`             | **POST**: Purchases the items in the user's cart. *Requires login.* |
 | `history/purchases`         | **GET**: Gets the product instances related to the user's previous purchases. *Requires login.* |
