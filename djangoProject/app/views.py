@@ -35,12 +35,12 @@ class TestToken(APIView):
 
 
 class ProductView(APIView):
+    """GET: Get a product through its ID.
+    Sucess status: 200 OK.
+    Failure status: 404 NOT FOUND."""
     authentication_classes = [authentication.TokenAuthentication]
 
     def get(self, request, i):
-        """Get a product through its ID.
-        Sucess status: 200 OK.
-        Failure status: 404 NOT FOUND."""
         try:
             return Response(ProductSerializer(Product.objects.get(id=i)).data, status=status.HTTP_200_OK)
         except ObjectDoesNotExist:
@@ -48,12 +48,15 @@ class ProductView(APIView):
 
 
 class MyProducts(APIView):
+    """GET: Get the list of the user's products.
+    Allows filtering by: group, category, upper price, lower price.
+    POST: Add a new product.
+    Sucess status: 201 CREATED.
+    Failure status: 400 BAD REQUEST."""
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
-        """Get the list of the user's products.
-        Allows filtering by: group, category, upper price, lower price."""
         print(f'{request = }')
         req_get = request.GET
         group = req_get.get('group')
@@ -74,9 +77,6 @@ class MyProducts(APIView):
         return Response(ProductSerializer(product_list, many=True).data, status=status.HTTP_200_OK)
 
     def post(self, request):
-        """Add a new product.
-        Sucess status: 201 CREATED.
-        Failure status: 400 BAD REQUEST."""
         form = ProductForm(request.data)
         if form.is_valid():
             category = form.cleaned_data['category']
@@ -102,11 +102,11 @@ class MyProducts(APIView):
 
 
 class Dashboard(APIView):
+    """GET: Gets the products, excluding the user's own, if logged in.
+    Allows filtering and sorting: group, category, upper (price), lower (price), order."""
     authentication_classes = [authentication.TokenAuthentication]
 
     def get(self, request):
-        """Gets the products, excluding the user's own, if logged in.
-        Allows filtering and sorting: group, category, upper (price), lower (price), order."""
         req_get = request.GET
         group = req_get.get('group')
         category = req_get.get('category')
@@ -143,11 +143,13 @@ class Dashboard(APIView):
 # ADDED_MSG = 'Product added to cart!'
 
 class Cart(APIView):
+    """DELETE: Delete a product's instances from a cart.
+    GET: Get the product instances that the user's cart is composed of.
+    POST: Add instances of a product to the cart."""
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
     def delete(self, request):
-        """Delete a product's instances from a cart."""
         product_id = request.DELETE['productInstance']
         prod_insts = ProductInstance.objects.filter(id=product_id)
         if prod_insts:
@@ -156,13 +158,11 @@ class Cart(APIView):
         return Response(status.HTTP_400_BAD_REQUEST)
 
     def get(self, request):
-        """Get the product instances that the user's cart is composed of."""
         # Total price calculation removed, Angular's job now
         product_instance_list = ProductInstance.objects.filter(client=request.user, sold=False)
         return Response(ProductInstanceSerializer(product_instance_list, many=True).data, status=status.HTTP_200_OK)
 
     def post(self, request):
-        """Add instances of a product to the cart."""
         product_id = request.POST['product_id']
         quantity = request.POST['quantity']
         try:
@@ -210,13 +210,13 @@ class Cart(APIView):
 
 
 class CartCheckout(APIView):
+    """POST: Checkout: purchase the items in the cart.
+    Success status: 200 OK.
+    Failures status: 400 BAD REQUEST."""
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request):
-        """Checkout: purchase the items in the cart.
-        Success status: 200 OK.
-        Failures status: 400 BAD REQUEST."""
         form = PaymentForm(request.data)
         if form.is_valid():
             prod_insts = ProductInstance.objects.filter(client=request.user, sold=False)
@@ -239,31 +239,31 @@ class CartCheckout(APIView):
 
 
 class PurchaseHistory(APIView):
+    """GET: Get the purchase history of the user."""
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
-        """Get the purchase history of the user."""
         purchases = ProductInstance.objects.filter(client=request.user, sold=True).select_related()
         return Response(ProductInstanceSerializer(purchases, many=True).data, status=status.HTTP_200_OK)
 
 
 class SaleHistory(APIView):
+    """GET: Get the sale history of the user."""
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
-        """Get the sale history of the user."""
         sales = ProductInstance.objects.filter(product__seller=request.user, sold=True).select_related()
         return Response(ProductInstanceSerializer(sales, many=True).data, status=status.HTTP_200_OK)
 
 
 class AddStock(APIView):
+    """POST: Increases the stock of a user's product."""
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request):
-        """Increases the stock of a user's product."""
         product_id = request.POST['product_id']
         quantity = request.POST['stock']
         try:
@@ -287,11 +287,11 @@ class AddStock(APIView):
 
 
 class AddProductImage(APIView):
+    """POST: Adds an image to a product."""
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request):
-        """Adds an image to a product."""
         try:
             product = Product.objects.get(id=request.POST['product_id'])
         except ObjectDoesNotExist:
@@ -303,12 +303,12 @@ class AddProductImage(APIView):
 
 
 class AddProductGroup(APIView):
+    """POST: Adds a group to a product.
+    Creates the group if it doesn't exist yet."""
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request):
-        """Adds a group to a product.
-        Creates the group if it doesn't exist yet."""
         try:
             product = Product.objects.get(id=request.POST['product_id'])
         except ObjectDoesNotExist:
@@ -328,12 +328,12 @@ class AddProductGroup(APIView):
 
 
 class ToggleProductVisibility(APIView):
+    """POST: Toggles the visibility of a product.
+    Requires admin privileges."""
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAdminUser]
 
     def post(self, request):
-        """Toggles the visibility of a product.
-        Requires admin privileges."""
         try:
             product = Product.objects.get(id=request.POST['product_id'])
         except ObjectDoesNotExist:
