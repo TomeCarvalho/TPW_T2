@@ -1,24 +1,30 @@
 export class Product {
+  id: number;
+  images: any[];
   category: string;
   name: string;
   stock: number;
   description: string;
   price: number;
-  seller: number;
-  group: string
   hidden: boolean;
+  seller: number;
+  group: any[];
 
-  constructor(category: string, name: string,
+
+  constructor(id: number, images: any[],
+              category: string, name: string,
               stock: number, description: string,
-              price: number, seller: number,
-              group: string, hidden: boolean) {
+              price: number, hidden: boolean,
+              seller: number, group: any[]) {
+    this.id = id;
+    this.images = images;
     this.category = category;
     this.name = name;
     this.stock = stock;
     this.description = description;
     this.price = price;
+    this.hidden = hidden;
     this.seller = seller;
     this.group = group;
-    this.hidden = hidden;
   }
 }

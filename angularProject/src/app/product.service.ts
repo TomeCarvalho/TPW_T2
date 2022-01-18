@@ -16,8 +16,8 @@ export class ProductService {
 
   constructor(private http: HttpClient) { }
 
-  getProducts(): Observable<Product[]>{
-    const url = this.baseURL + 'products';
+  getDashboard(): Observable<Product[]>{
+    const url = this.baseURL + 'dashboard';
     return this.http.get<Product[]>(url);
   }
 }

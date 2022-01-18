@@ -9,12 +9,29 @@ import {Product} from "../product";
 })
 export class ListproductsComponent implements OnInit {
 
-  products: Product[] | undefined;
+  products_group: Product[][] | undefined;
+  all_products: Product[] = [];
+
 
   constructor(private productService: ProductService) { }
 
-  ngOnInit(): void {
-    this.productService.getProducts().subscribe(products => this.products = products)
+  async ngOnInit(): Promise<void> {
+
+
+    await this.productService.getDashboard().subscribe(products => {
+      console.log("I");
+      this.all_products = products;
+      this.products_group = this.groupByN(3, this.all_products);
+    })
+    console.log(this.all_products)
   }
+  groupByN(n: number, data: Product[]) {
+    console.log("AAAAAAAAA")
+    console.log(data)
+    let result = [];
+    for (let i = 0; i < data.length; i += n) result.push(data.slice(i, i + n));
+    console.log(result)
+    return result;
+  };
 
 }
