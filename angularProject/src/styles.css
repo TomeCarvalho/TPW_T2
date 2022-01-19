@@ -1,1 +1,42 @@
 /* You can add global styles to this file, and also import other style files */
+* {
+  font-family: "Roboto", sans-serif;
+}
+
+.card {
+  display: inline-block;
+  margin: 1em;
+}
+
+.max-lines {
+  display: block; /* or inline-block */
+  text-overflow: ellipsis;
+  word-wrap: break-word;
+  overflow: hidden;
+  height: 5.4em;
+  line-height: 1.8em;
+}
+
+.fa-font {
+  font-family: FontAwesome
+}
+
+* {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.carousel-img {
+  max-height: 30em;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  /* display: none; <- Crashes Chrome on hover */
+  -webkit-appearance: none;
+  margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+}
+
+input[type=number] {
+  -moz-appearance:textfield; /* Firefox */
+}
+

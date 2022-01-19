@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {environment} from "../environments/environment";
 import {HttpClient, HttpErrorResponse, HttpHeaders} from "@angular/common/http";
 import {catchError, throwError} from "rxjs";
+import {AppComponent} from "./app.component";
 
 const httpOptions = {
   headers: new HttpHeaders({'Content-Type': 'application/json'})
@@ -19,6 +20,8 @@ export class LoginService {
 
   login(username: string, password: string) {
     console.log(`LoginService.login: Sending ${{"username": username, "password": password}}`)
+    console.log(username)
+    console.log(password)
     this.http.post<any>(
       `${environment.apiUrl}/token-auth`,
       {"username": username, "password": password},
@@ -27,7 +30,8 @@ export class LoginService {
       .pipe(catchError(LoginService.handleError))
       .subscribe(data => {
         LoginService._token = data.token
-        console.log(`LoginService.login: Authentication request successful.\nToken: ${LoginService.token}`)
+        console.log(`LoginService.login: Authentication request successful.\nToken: ${LoginService._token}`)
+        //this.appComponent.LogIn()
         return data
       })
   }
@@ -48,7 +52,7 @@ export class LoginService {
     return throwError(() => 'Whoops, something went wrong...');
   }
 
-  public static get token(): string {
+  public token(): string {
     return LoginService._token;
   }
 }

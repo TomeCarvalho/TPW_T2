@@ -7,18 +7,22 @@ import {LoginComponent} from './login/login.component';
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {LoginService} from "./login.service";
 import {HttpClientModule} from "@angular/common/http";
+import { MyNavbarComponent } from './my-navbar/my-navbar.component';
+import { AppRoutingModule } from './app-routing.module';
 
 @NgModule({
   declarations: [
     AppComponent,
     ListproductsComponent,
-    LoginComponent
+    LoginComponent,
+    MyNavbarComponent
   ],
   imports: [
     BrowserModule,
     FormsModule,
     ReactiveFormsModule,
-    HttpClientModule
+    HttpClientModule,
+    AppRoutingModule
   ],
   providers: [LoginService],
   bootstrap: [AppComponent]
