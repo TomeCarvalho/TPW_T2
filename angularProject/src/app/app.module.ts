@@ -10,6 +10,7 @@ import {HttpClientModule} from "@angular/common/http";
 import { MyNavbarComponent } from './my-navbar/my-navbar.component';
 import { AppRoutingModule } from './app-routing.module';
 
+
 @NgModule({
   declarations: [
     AppComponent,

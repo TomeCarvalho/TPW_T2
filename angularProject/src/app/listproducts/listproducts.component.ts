@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {ProductService} from "../product.service";
 import {Product} from "../product";
+import {ActivatedRoute} from "@angular/router";
 
 @Component({
   selector: 'app-listproducts',
@@ -11,19 +12,32 @@ export class ListproductsComponent implements OnInit {
 
   products_group: Product[][] | undefined;
   all_products: Product[] = [];
+  source!: String;
 
+  constructor(private productService: ProductService, private route: ActivatedRoute) { }
 
-  constructor(private productService: ProductService) { }
+  ngOnInit() {
 
-  async ngOnInit(): Promise<void> {
+    this.route.data.subscribe(value => {
+      this.source = value['source']
+      console.log(value)
+      console.log(this.source)
+      if (this.source == 'dashboard'){
+        this.productService.getDashboard().subscribe(products => {
+          this.all_products = products;
+          this.products_group = this.groupByN(3, this.all_products);
+        })
+      }
+      else if (this.source == 'myproducts'){
+        this.productService.getMyProducts().subscribe(products => {
+          this.all_products = products;
+          this.products_group = this.groupByN(3, this.all_products);
+        })
+      }
 
-
-    await this.productService.getDashboard().subscribe(products => {
-      console.log("I");
-      this.all_products = products;
-      this.products_group = this.groupByN(3, this.all_products);
+      console.log(this.all_products)
     })
-    console.log(this.all_products)
+
   }
   groupByN(n: number, data: Product[]) {
     console.log("AAAAAAAAA")

@@ -5,8 +5,9 @@ import { ListproductsComponent } from "./listproducts/listproducts.component";
 import {LoginComponent} from "./login/login.component";
 
 const routes: Routes = [
-  {path: "", component: ListproductsComponent},
-  {path: "dashboard", component: ListproductsComponent},
+  {path: "", component: ListproductsComponent, data:{source: 'dashboard'}},
+  {path: "dashboard", component: ListproductsComponent, data:{source: 'dashboard'}},
+  {path: "myproducts", component: ListproductsComponent, data:{source: 'myproducts'}},
   {path: "login", component: LoginComponent}
 ];
 

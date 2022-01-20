@@ -30,6 +30,7 @@ export class LoginService {
       .pipe(catchError(LoginService.handleError))
       .subscribe(data => {
         LoginService._token = data.token
+        localStorage.setItem('loginToken', LoginService._token)
         console.log(`LoginService.login: Authentication request successful.\nToken: ${LoginService._token}`)
         //this.appComponent.LogIn()
         return data
@@ -38,6 +39,7 @@ export class LoginService {
 
   logout() {
     LoginService._token = ""
+    localStorage.setItem("loginToken", "")
   }
 
   private static handleError(error: HttpErrorResponse) {
@@ -53,6 +55,6 @@ export class LoginService {
   }
 
   public token(): string {
-    return LoginService._token;
+    return String(localStorage.getItem("loginToken"));
   }
 }
