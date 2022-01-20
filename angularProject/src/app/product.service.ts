@@ -19,11 +19,14 @@ export class ProductService {
 
   getDashboard(): Observable<Product[]>{
     const url = this.baseURL + 'dashboard';
-    let header = {
-      headers: new HttpHeaders()
-        .set('Authorization',  `Token ${(this.loginService.token())}`)
+    if (this.loginService.token()){
+      let header = {
+        headers: new HttpHeaders()
+          .set('Authorization',  `Token ${(this.loginService.token())}`)
+      }
+      return this.http.get<Product[]>(url, header);
     }
-    return this.http.get<Product[]>(url, header);
+    return this.http.get<Product[]>(url);
   }
 
   getMyProducts(): Observable<Product[]>{
@@ -32,8 +35,17 @@ export class ProductService {
       headers: new HttpHeaders()
         .set('Authorization',  `Token ${(this.loginService.token())}`)
     }
-
     return this.http.get<Product[]>(url, header);
   }
+
+  getProducts(source: string, query: string){
+    const url = this.baseURL + source + query;
+    let header = {
+      headers: new HttpHeaders()
+        .set('Authorization',  `Token ${(this.loginService.token())}`)
+    }
+    return this.http.get<Product[]>(url, header);
+  }
+
 }
 

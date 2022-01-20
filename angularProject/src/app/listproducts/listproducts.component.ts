@@ -12,7 +12,7 @@ export class ListproductsComponent implements OnInit {
 
   products_group: Product[][] | undefined;
   all_products: Product[] = [];
-  source!: String;
+  source!: string;
 
   constructor(private productService: ProductService, private route: ActivatedRoute) { }
 
@@ -20,25 +20,18 @@ export class ListproductsComponent implements OnInit {
 
     this.route.data.subscribe(value => {
       this.source = value['source']
-      console.log(value)
-      console.log(this.source)
-      if (this.source == 'dashboard'){
-        this.productService.getDashboard().subscribe(products => {
-          this.all_products = products;
-          this.products_group = this.groupByN(3, this.all_products);
-        })
-      }
-      else if (this.source == 'myproducts'){
-        this.productService.getMyProducts().subscribe(products => {
-          this.all_products = products;
-          this.products_group = this.groupByN(3, this.all_products);
-        })
-      }
-
-      console.log(this.all_products)
+      this.getProducts("");
     })
 
   }
+
+  getProducts(query: string){
+    this.productService.getProducts(this.source, query).subscribe(products => {
+      this.all_products = products;
+      this.products_group = this.groupByN(3, this.all_products);
+    })
+  }
+
   groupByN(n: number, data: Product[]) {
     console.log("AAAAAAAAA")
     console.log(data)

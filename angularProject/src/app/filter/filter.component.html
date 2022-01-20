@@ -1,0 +1,61 @@
+<div class="container mt-3 p-1">
+  <form [formGroup]="filterForm" (ngSubmit)="onSubmit(filterForm.value)">
+    <!-- {% csrf_token %} --->
+    <div class="form-row">
+      <div class="mr-2">
+        <label>
+          By Category
+        </label>
+      </div>
+      <div>
+        <select name="by_category" id="category" formControlName="category">
+          <option value="">----------</option>
+          <option value="pant">Pants</option>
+          <option value="jeans">Jeans</option>
+          <option value="shirts">Shirts</option>
+          <option value="jackets">Jackets</option>
+          <option value="underware">Underwear</option>
+        </select>
+      </div>
+      <div class="mr-2">
+        <label>
+          By Group
+        </label>
+      </div>
+      <div class="mr-2">
+        <select name="by_group" id="group" formControlName="group">
+          <option value="">----------</option>
+          <option *ngFor="let group of groups" value="{{group.value}}}">{{group.name}}</option>
+        </select>
+      </div>
+      <div class="mr-2">
+        <label>
+          Lower Limit
+        </label>
+      </div>
+      <div class="mr-2">
+        <input type="number" name="by_price_Lower" style="width: 3em" id="lower" formControlName="lower">
+      </div>
+      <div class="mr-2">
+        <label>
+          Upper Limit
+        </label>
+      </div>
+      <div class="mr-2">
+        <input type="number" name="by_price_Upper" style="width: 3em" id="upper" formControlName="upper">
+      </div>
+      <div class="mr-2">
+        <label>
+          Order
+        </label>
+      </div>
+      <div class="mr-2">
+        <select name="order" id="order" formControlName="order">
+          <option value="">----------</option>
+          <option *ngFor="let ord of order" value="{{ord.value}}">{{ord.name}}</option>
+        </select>
+      </div>
+      <input type="submit" value="Filter" class="btn btn-primary ml-2">
+    </div>
+  </form>
+</div>

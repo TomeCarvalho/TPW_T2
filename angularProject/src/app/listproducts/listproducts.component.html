@@ -1,7 +1,8 @@
 <div class="container">
+  <app-filter></app-filter>
   <div class="card-group" *ngFor="let products of products_group">
     <div *ngFor="let product of products">
-      <a class="text-white" href="/products/{{ product.id }}">
+      <a class="text-white" routerLink="/products/{{ product.id }}">
         <div class="card">
           <img class="card-img-top" src="{{ product.images[0] }}" alt="Card image cap"
                style="height: 18rem; object-fit: scale-down">
@@ -18,8 +19,5 @@
         </div>
       </a>
     </div>
-    <!--
-
-    -->
   </div>
 </div>

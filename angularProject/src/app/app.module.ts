@@ -9,6 +9,7 @@ import {LoginService} from "./login.service";
 import {HttpClientModule} from "@angular/common/http";
 import { MyNavbarComponent } from './my-navbar/my-navbar.component';
 import { AppRoutingModule } from './app-routing.module';
+import { FilterComponent } from './filter/filter.component';
 
 
 @NgModule({
@@ -16,7 +17,8 @@ import { AppRoutingModule } from './app-routing.module';
     AppComponent,
     ListproductsComponent,
     LoginComponent,
-    MyNavbarComponent
+    MyNavbarComponent,
+    FilterComponent
   ],
   imports: [
     BrowserModule,
