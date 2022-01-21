@@ -10,6 +10,7 @@ import {HttpClientModule} from "@angular/common/http";
 import { MyNavbarComponent } from './my-navbar/my-navbar.component';
 import { AppRoutingModule } from './app-routing.module';
 import { FilterComponent } from './filter/filter.component';
+import { CartComponent } from './cart/cart.component';
 
 
 @NgModule({
@@ -18,7 +19,8 @@ import { FilterComponent } from './filter/filter.component';
     ListproductsComponent,
     LoginComponent,
     MyNavbarComponent,
-    FilterComponent
+    FilterComponent,
+    CartComponent
   ],
   imports: [
     BrowserModule,

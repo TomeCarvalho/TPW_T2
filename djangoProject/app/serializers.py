@@ -30,6 +30,7 @@ class SaleSerializer(serializers.ModelSerializer):
 
 
 class ProductInstanceSerializer(serializers.ModelSerializer):
+    product = ProductSerializer()
     class Meta:
         model = ProductInstance
         fields = '__all__'

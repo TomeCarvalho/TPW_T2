@@ -153,9 +153,13 @@ class Cart(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def delete(self, request):
+        print("AAAAAAAAAAAAAA")
         product_id = request.DELETE['productInstance']
         prod_insts = ProductInstance.objects.filter(id=product_id)
+        print(product_id)
+        print("BBBbb")
         if prod_insts:
+            print("remove")
             prod_insts.delete()
             return Response(status.HTTP_200_OK)
         return Response(status.HTTP_400_BAD_REQUEST)
@@ -163,6 +167,7 @@ class Cart(APIView):
     def get(self, request):
         # Total price calculation removed, Angular's job now
         product_instance_list = ProductInstance.objects.filter(client=request.user, sold=False)
+        print(ProductInstanceSerializer(product_instance_list, many=True).data)
         return Response(ProductInstanceSerializer(product_instance_list, many=True).data, status=status.HTTP_200_OK)
 
     def post(self, request):

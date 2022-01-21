@@ -1,0 +1,45 @@
+<div class="container mt-3">
+  <div class="heading">
+    <h1>
+      Shopping Cart
+    </h1>
+  </div>
+
+  <div class="cart">
+    <table class="table table-striped table-dark">
+      <tr>
+        <th style="width: 27%">Product</th>
+        <th style="width: 27%">Price</th>
+        <th style="width: 27%">Quantity</th>
+        <th style="width: 15%">Total</th>
+        <th style="width: 4%"></th>
+      </tr>
+      <tr *ngFor="let prod_inst of cart">
+        <td><a routerLink="/products/{{ prod_inst.product.id }}">{{ prod_inst.product.name }}</a></td>
+        <td>{{ prod_inst.product.price }}</td>
+        <td>{{ prod_inst.quantity }}</td>
+        <td>{{ prod_inst.quantity * prod_inst.product.price }} €</td>
+        <td>
+          <div (click)="remove(prod_inst)">
+            <input name="productInstance" class="d-none" type="number" value="{{ prod_inst.product.id }}">
+            <button class="button btn-danger rounded" type="submit">
+              <i class="fa-font fa fa-minus-circle"></i>
+            </button>
+          </div>
+        </td>
+      </tr>
+
+      <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td>Total: {{ getTotal() }} €</td>
+        <td></td>
+      </tr>
+    </table>
+  </div>
+    <a *ngIf="cart" href="checkout" class="btn btn-outline-success my-2 my-sm-0 btn-update">
+      <i class="fa fa-credit-card"></i>
+      Check Out
+    </a>
+</div>

@@ -17,28 +17,7 @@ export class ProductService {
 
   constructor(private http: HttpClient, private loginService: LoginService) { }
 
-  getDashboard(): Observable<Product[]>{
-    const url = this.baseURL + 'dashboard';
-    if (this.loginService.token()){
-      let header = {
-        headers: new HttpHeaders()
-          .set('Authorization',  `Token ${(this.loginService.token())}`)
-      }
-      return this.http.get<Product[]>(url, header);
-    }
-    return this.http.get<Product[]>(url);
-  }
-
-  getMyProducts(): Observable<Product[]>{
-    const url = this.baseURL + 'my-products';
-    let header = {
-      headers: new HttpHeaders()
-        .set('Authorization',  `Token ${(this.loginService.token())}`)
-    }
-    return this.http.get<Product[]>(url, header);
-  }
-
-  getProducts(source: string, query: string){
+  getProducts(source: string, query: string): Observable<Product[]>{
     const url = this.baseURL + source + query;
     let header = {
       headers: new HttpHeaders()
