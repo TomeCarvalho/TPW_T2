@@ -1,6 +1,7 @@
 import {Product} from "./product";
 
 export class ProductInstance {
+  id: number;
   product: Product;
   quantity: number;
   client: number;
@@ -8,8 +9,8 @@ export class ProductInstance {
   sold: boolean;
 
 
-  constructor(product: Product, quantity: number, client: number, sale: number, sold: boolean) {
-    console.log(product)
+  constructor(id: number, product: Product, quantity: number, client: number, sale: number, sold: boolean) {
+    this.id = id;
     this.product = product;
     this.quantity = quantity;
     this.client = client;

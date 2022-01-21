@@ -27,9 +27,18 @@ export class CartService {
     let header = {
       headers: new HttpHeaders()
         .set('Authorization',  `Token ${(this.loginService.token())}`),
-      body: {productInstance: prod_inst}
+      body: {productInstance: prod_inst.id}
     }
     console.log("PAPAPAPAPAP")
-    return this.http.delete<any>(url, header)
+    console.log(this.loginService.token())
+    this.http.delete(url, header).subscribe({
+      next: data => {
+        console.log('Delete successful');
+      },
+      error: error => {
+        console.error('There was an error!', error);
+      }
+    })
+    console.log("END DELETE")
   }
 }

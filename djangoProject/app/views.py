@@ -1,3 +1,5 @@
+import json
+
 from rest_framework.authtoken.admin import User
 from rest_framework.views import APIView
 
@@ -153,7 +155,13 @@ class Cart(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def delete(self, request):
-        product_id = request.DELETE['productInstance']
+        #print("DELETE")
+        raw_data = request.read()
+        #print(raw_data)
+        data = json.loads(raw_data)
+        if not data.get("productInstance"):
+            return Response(status.HTTP_400_BAD_REQUEST)
+        product_id = data.get("productInstance")
         prod_insts = ProductInstance.objects.filter(id=product_id)
         if prod_insts:
             prod_insts.delete()
