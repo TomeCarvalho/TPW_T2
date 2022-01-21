@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {FormBuilder} from "@angular/forms";
 import {ListproductsComponent} from "../listproducts/listproducts.component";
+import {ProductService} from "../product.service";
 
 @Component({
   selector: 'app-filter',
@@ -10,9 +11,7 @@ import {ListproductsComponent} from "../listproducts/listproducts.component";
 export class FilterComponent implements OnInit {
 
   // TODO: add fetch of groups in api
-  groups = [
-    {name: "----------", value: ""}
-  ];
+  groups: any = [];
 
   order = [
     {name: "Alphabetical ↑", value: "name"},
@@ -34,9 +33,19 @@ export class FilterComponent implements OnInit {
   })
 
 
-  constructor(private listProduct: ListproductsComponent, private formBuilder: FormBuilder) { }
+  constructor(private listProduct: ListproductsComponent,
+              private formBuilder: FormBuilder,
+              private productService: ProductService) { }
 
   ngOnInit(): void {
+    this.productService.getGroups().subscribe(
+      value => {
+        for(let group of value){
+          console.log(group.name)
+          this.groups.push({name: group.name, value: group.name})
+        }
+      }
+    )
   }
 
   onSubmit(data: any) {
@@ -44,6 +53,7 @@ export class FilterComponent implements OnInit {
     console.log(data)
     for (let [key, value] of Object.entries(data)) {
       if (value) {
+        console.log(value)
         query += `${key}=${value}&`;
       }
     }

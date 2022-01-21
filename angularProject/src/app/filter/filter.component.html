@@ -3,16 +3,16 @@
     <!-- {% csrf_token %} --->
     <div class="form-group row">
       <div class="form-group col-md-2">
-        <label for="category" class="col-form-label col-form-label-sm col-sm-6">
+        <label for="category" class="col-form-label col-form-label-sm col-sm-5">
           By Category
         </label>
-        <select class="form-control-sm col-sm-6" name="by_category" id="category" formControlName="category">
+        <select class="form-control-sm col-sm-7" name="by_category" id="category" formControlName="category">
           <option value="">----------</option>
           <option value="pant">Pants</option>
           <option value="jeans">Jeans</option>
           <option value="shirts">Shirts</option>
           <option value="jackets">Jackets</option>
-          <option value="underware">Underwear</option>
+          <option value="underwear">Underwear</option>
         </select>
       </div>
       <div class="form-group col-md-2">
@@ -21,7 +21,7 @@
         </label>
         <select class="form-control-sm col-sm-6" name="by_group" id="group" formControlName="group">
           <option value="">----------</option>
-          <option *ngFor="let group of groups" value="{{group.value}}}">{{group.name}}</option>
+          <option *ngFor="let group of groups" value="{{group.value}}">{{group.name}}</option>
         </select>
       </div>
       <div class="form-group col-md-2">
@@ -37,10 +37,10 @@
         <input type="number" class="form-control-sm col-sm-6" name="by_price_Upper" style="width: 3em" id="upper" formControlName="upper">
       </div>
       <div class="form-group col-md-2">
-        <label class="col-form-label col-form-label-sm col-sm-6 text-center">
+        <label class="col-form-label col-form-label-sm col-sm-3 text-center">
           Order
         </label>
-        <select class="form-control-sm col-sm-6" name="order" id="order" formControlName="order">
+        <select class="form-control-sm col-sm-9" name="order" id="order" formControlName="order">
           <option value="">----------</option>
           <option *ngFor="let ord of order" value="{{ord.value}}">{{ord.name}}</option>
         </select>

@@ -26,5 +26,14 @@ export class ProductService {
     return this.http.get<Product[]>(url, header);
   }
 
+  getGroups(){
+    const url = this.baseURL + "groups"
+    let header = {
+      headers: new HttpHeaders()
+        .set('Authorization',  `Token ${(this.loginService.token())}`)
+    }
+    return this.http.get<any>(url, header);
+  }
+
 }
 
