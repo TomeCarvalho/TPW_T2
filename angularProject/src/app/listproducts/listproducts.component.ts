@@ -28,7 +28,7 @@ export class ListproductsComponent implements OnInit {
   getProducts(query: string){
     this.productService.getProducts(this.source, query).subscribe(products => {
       this.all_products = products;
-      this.products_group = this.groupByN(3, this.all_products);
+      this.products_group = this.groupByN(4, this.all_products);
     })
   }
 
