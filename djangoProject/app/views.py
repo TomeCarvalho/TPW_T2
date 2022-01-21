@@ -153,13 +153,9 @@ class Cart(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def delete(self, request):
-        print("AAAAAAAAAAAAAA")
         product_id = request.DELETE['productInstance']
         prod_insts = ProductInstance.objects.filter(id=product_id)
-        print(product_id)
-        print("BBBbb")
         if prod_insts:
-            print("remove")
             prod_insts.delete()
             return Response(status.HTTP_200_OK)
         return Response(status.HTTP_400_BAD_REQUEST)
