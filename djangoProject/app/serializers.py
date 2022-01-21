@@ -11,7 +11,7 @@ class GroupSerializer(serializers.ModelSerializer):
 
 class ProductSerializer(serializers.ModelSerializer):
     images = serializers.StringRelatedField(many=True)
-
+    group = GroupSerializer(many=True)
     class Meta:
         model = Product
         fields = '__all__'
