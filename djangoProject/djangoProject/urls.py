@@ -34,5 +34,6 @@ urlpatterns = [
     path('ws/add-product-img', views.AddProductImage.as_view()),
     path('ws/add-product-group', views.AddProductGroup.as_view()),
     path('ws/toggle-product-visibility', views.ToggleProductVisibility.as_view()),
+    path('ws/groups', views.Groups.as_view())
     # path('ws/test-token', views.TestToken.as_view())
 ]

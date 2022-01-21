@@ -9,7 +9,7 @@ from django.db.models import Q
 from rest_framework import status, authentication, permissions
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from app.serializers import ProductSerializer, ProductInstanceSerializer, UserSerializer
+from app.serializers import ProductSerializer, ProductInstanceSerializer, UserSerializer, GroupSerializer
 
 
 @api_view(['POST'])
@@ -345,6 +345,16 @@ class ToggleProductVisibility(APIView):
         product.hidden = not product.hidden
         product.save()
         return Response(ProductSerializer(product).data, status=status.HTTP_200_OK)
+
+
+class Groups(APIView):
+    """GET: Gets the list of groups.
+    POST: Adds a group."""
+    authentication_classes = [authentication.TokenAuthentication]
+
+    def get(self, request):
+        return Response(GroupSerializer(Group.objects.all(), many=True).data, status=status.HTTP_200_OK)
+
 
 # class AddToCart(APIView):
 #     authentication_classes = [authentication.TokenAuthentication]

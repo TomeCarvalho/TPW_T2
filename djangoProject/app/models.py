@@ -8,7 +8,7 @@ from rest_framework.authtoken.models import Token
 
 
 class Group(models.Model):
-    name = models.CharField(max_length=150)
+    name = models.CharField(max_length=150, unique=True)
 
 
 class Product(models.Model):
