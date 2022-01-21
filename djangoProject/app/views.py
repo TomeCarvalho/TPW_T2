@@ -63,6 +63,7 @@ class MyProducts(APIView):
         category = req_get.get('category')
         upper = req_get.get('upper')
         lower = req_get.get('lower')
+        order = req_get.get('order')
         q = Q(seller=request.user)
 
         if group:
@@ -74,6 +75,8 @@ class MyProducts(APIView):
         if lower:
             q &= Q(price__gte=lower)
         product_list = Product.objects.filter(q)
+        if order:
+            product_list = product_list.order_by(order)
         return Response(ProductSerializer(product_list, many=True).data, status=status.HTTP_200_OK)
 
     def post(self, request):
