@@ -6,20 +6,20 @@
   <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
     <a class="nav-link" routerLink="/"><span class="navbar-brand">XLO</span></a>
 
-    <ul *ngIf="loginService.token()" class="navbar-nav mr-auto mt-2 mt-lg-0" style="width: 100%">
-      <li class="nav-item {% if myProductsPage %} active {% endif %}">
+    <ul class="navbar-nav mr-auto mt-2 mt-lg-0" style="width: 100%">
+      <li *ngIf="loginService.token()" class="nav-item {% if myProductsPage %} active {% endif %}">
         <a class="nav-link" routerLink="/myproducts">
           <i class="fa fa-cart-arrow-down"></i>
           My Products
         </a>
       </li>
-      <li class="nav-item {% if historyPage %} active {% endif %}">
+      <li *ngIf="loginService.token()" class="nav-item {% if historyPage %} active {% endif %}">
         <a class="nav-link" routerLink="/history">
           <i class="fa fa-clock-o"></i>
           History
         </a>
       </li>
-      <li class="nav-item {% if historyPage %} active {% endif %}">
+      <li *ngIf="loginService.token()" class="nav-item {% if historyPage %} active {% endif %}">
         <a class="nav-link" routerLink="/cart">
           <i class="fa fa-shopping-cart"></i>
           Cart
@@ -31,27 +31,23 @@
       <!-- {% csrf_token %} -->
       <input name="search_prompt" class="form-control mr-sm-2" type="search" placeholder="Search"
              aria-label="Search" style="width: 50%">
-      <button class="btn btn-outline-success my-2 my-sm-0" style="margin-right: 0.5em" type="submit">
+      <button class="btn btn-outline-success mx-2 my-2 my-sm-0" style="margin-right: 0.5em" type="submit">
         <i class="fa fa-search"></i>
       </button>
     </form>
     <ul class="navbar-nav ml-auto">
-      <div *ngIf="loginService.token()">
-        <li class="nav-item">
-          <button class="btn btn-secondary" (click)="loginService.logout()">
-              <i class="fa fa-sign-out"></i>
-              Log out
-          </button>
-        </li>
-      </div>
-      <div *ngIf="!loginService.token()">
-        <li class="nav-item {% if loginPage %} active {% endif %}">
-          <a class="text-white nav-link btn btn-secondary" routerLink="/login">
-            <i class="fa fa-sign-in"></i>
-            Log in
-          </a>
-        </li>
-      </div>
+      <li *ngIf="loginService.token()" style="width: 7em;" class="nav-item">
+        <button class="btn btn-secondary" (click)="loginService.logout()">
+            <i class="fa fa-sign-out"></i>
+            Log out
+        </button>
+      </li>
+      <li *ngIf="!loginService.token()" style="width: 5em;" class="nav-item {% if loginPage %} active {% endif %}">
+        <a class="text-white nav-link btn btn-secondary" routerLink="/login">
+          <i class="fa fa-sign-in"></i>
+          Log in
+        </a>
+      </li>
     </ul>
   </div>
 </nav>

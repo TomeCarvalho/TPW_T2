@@ -1,5 +1,13 @@
 <div class="container">
+  <div *ngIf="source == 'my-products'" class="container mt-3 p-1">
+    <a routerLink="/newproduct/" class="btn btn-primary">
+      <i class="fa fa-plus-circle"></i>
+      New Product
+    </a>
+  </div>
+
   <app-filter></app-filter>
+
   <div class="card-group" *ngFor="let products of products_group">
     <div *ngFor="let product of products">
       <a class="text-white" routerLink="/products/{{ product.id }}">
@@ -16,7 +24,6 @@
 
             <span *ngFor="let group of product.group" class="badge bg-primary">{{ group.name }}</span>
             <i *ngIf="product.hidden" class="fa fa-eye-slash"></i>
-
           </div>
         </div>
       </a>

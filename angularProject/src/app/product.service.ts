@@ -19,18 +19,26 @@ export class ProductService {
 
   getProducts(source: string, query: string): Observable<Product[]>{
     const url = this.baseURL + source + query;
-    let header = {
-      headers: new HttpHeaders()
-        .set('Authorization',  `Token ${(this.loginService.token())}`)
+    let header = {};
+    if (this.loginService.token()){
+      header = {
+
+        headers: new HttpHeaders()
+          .set('Authorization',  `Token ${(this.loginService.token())}`)
+      }
     }
     return this.http.get<Product[]>(url, header);
   }
 
   getGroups(){
     const url = this.baseURL + "groups"
-    let header = {
-      headers: new HttpHeaders()
-        .set('Authorization',  `Token ${(this.loginService.token())}`)
+    let header = {};
+    if (this.loginService.token()){
+      header = {
+
+        headers: new HttpHeaders()
+          .set('Authorization',  `Token ${(this.loginService.token())}`)
+      }
     }
     return this.http.get<any>(url, header);
   }
