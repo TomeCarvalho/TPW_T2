@@ -11,6 +11,7 @@ import { MyNavbarComponent } from './my-navbar/my-navbar.component';
 import { AppRoutingModule } from './app-routing.module';
 import { FilterComponent } from './filter/filter.component';
 import { CartComponent } from './cart/cart.component';
+import { ProductDetailsComponent } from './product-details/product-details.component';
 
 
 @NgModule({
@@ -20,7 +21,8 @@ import { CartComponent } from './cart/cart.component';
     LoginComponent,
     MyNavbarComponent,
     FilterComponent,
-    CartComponent
+    CartComponent,
+    ProductDetailsComponent
   ],
   imports: [
     BrowserModule,
