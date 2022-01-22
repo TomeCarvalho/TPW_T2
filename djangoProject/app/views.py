@@ -112,14 +112,16 @@ class Dashboard(APIView):
     authentication_classes = [authentication.TokenAuthentication]
 
     def get(self, request):
+        print(request)
         req_get = request.GET
         group = req_get.get('group')
         category = req_get.get('category')
         upper = req_get.get('upper')
         lower = req_get.get('lower')
         order = req_get.get('order')
+        search_prompt = req_get.get('search_prompt')
         q = Q()
-
+        print(search_prompt)
         if group:
             q &= Q(group__name=group)
         if category:
@@ -128,6 +130,8 @@ class Dashboard(APIView):
             q &= Q(price__lte=upper)
         if lower:
             q &= Q(price__gte=lower)
+        if search_prompt:
+            q &= Q(name__icontains=search_prompt)
 
         if request.user.is_authenticated:
             q &= ~Q(seller=request.user)

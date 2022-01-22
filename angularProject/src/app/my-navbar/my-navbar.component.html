@@ -26,11 +26,11 @@
         </a>
       </li>
     </ul>
-    <form action="/dashboard" method="get" class="form-inline my-2 my-lg-0"
-          style="display: flex; justify-content: end; width: 70%">
+    <form method="get" class="form-inline my-2 my-lg-0"
+          style="display: flex; justify-content: end; width: 70%" [formGroup]="searchForm"  (ngSubmit)="onSubmit(searchForm.value)">
       <!-- {% csrf_token %} -->
-      <input name="search_prompt" class="form-control mr-sm-2" type="search" placeholder="Search"
-             aria-label="Search" style="width: 50%">
+      <input id="search_prompt" class="form-control mr-sm-2" type="search" placeholder="Search"
+             aria-label="Search" style="width: 50%" formControlName="search_prompt">
       <button class="btn btn-outline-success mx-2 my-2 my-sm-0" style="margin-right: 0.5em" type="submit">
         <i class="fa fa-search"></i>
       </button>

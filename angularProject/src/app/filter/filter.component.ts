@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {FormBuilder} from "@angular/forms";
 import {ListproductsComponent} from "../listproducts/listproducts.component";
 import {ProductService} from "../product.service";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-filter',
@@ -10,7 +11,6 @@ import {ProductService} from "../product.service";
 })
 export class FilterComponent implements OnInit {
 
-  // TODO: add fetch of groups in api
   groups: any = [];
 
   order = [
@@ -35,7 +35,8 @@ export class FilterComponent implements OnInit {
 
   constructor(private listProduct: ListproductsComponent,
               private formBuilder: FormBuilder,
-              private productService: ProductService) { }
+              private productService: ProductService,
+              private router: Router) { }
 
   ngOnInit(): void {
     this.productService.getGroups().subscribe(
@@ -49,15 +50,13 @@ export class FilterComponent implements OnInit {
   }
 
   onSubmit(data: any) {
-    let query = "?";
-    console.log(data)
+    let queryParam: any = {}
     for (let [key, value] of Object.entries(data)) {
       if (value) {
         console.log(value)
-        query += `${key}=${value}&`;
+        queryParam[key] = value}
       }
-    }
-    console.log(query)
-    this.listProduct.getProducts(query);
+    console.log(queryParam)
+    this.router.navigate([this.router.url.split('?')[0] ], { queryParams: queryParam})
   }
 }

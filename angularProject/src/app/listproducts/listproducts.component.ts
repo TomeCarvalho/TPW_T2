@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {ProductService} from "../product.service";
 import {Product} from "../product";
 import {ActivatedRoute} from "@angular/router";
@@ -20,7 +20,16 @@ export class ListproductsComponent implements OnInit {
 
     this.route.data.subscribe(value => {
       this.source = value['source']
-      this.getProducts("");
+      let query = ""
+      this.route.queryParamMap.subscribe(params =>{
+        console.log(params)
+        query = this.getQuery(params)
+        this.getProducts(query);
+      })
+      if (!query){
+        this.getProducts("");
+      }
+
     })
 
   }
@@ -40,5 +49,22 @@ export class ListproductsComponent implements OnInit {
     console.log(result)
     return result;
   };
+
+  getQuery(data: any) {
+    if (!data){
+      return ""
+    }
+    let query = "?";
+    console.log("getQuery")
+    console.log(data)
+    for (let [key, value] of Object.entries(data.params)) {
+      if (value) {
+        console.log(value)
+        query += `${key}=${value}&`;
+      }
+    }
+    console.log(query)
+    return query
+  }
 
 }
