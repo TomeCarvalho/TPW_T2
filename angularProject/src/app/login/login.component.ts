@@ -21,6 +21,10 @@ export class LoginComponent implements OnInit {
     this.loginForm.reset()
   }
 
+  onSignUp(data: any): void {
+    this.loginService.signup(data.username, data.password)
+  }
+
   ngOnInit(): void {
   }
 }

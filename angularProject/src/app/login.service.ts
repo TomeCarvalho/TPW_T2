@@ -3,6 +3,7 @@ import {environment} from "../environments/environment";
 import {HttpClient, HttpErrorResponse, HttpHeaders} from "@angular/common/http";
 import {catchError, throwError} from "rxjs";
 import {AppComponent} from "./app.component";
+import {Router} from "@angular/router";
 
 const httpOptions = {
   headers: new HttpHeaders({'Content-Type': 'application/json'})
@@ -15,7 +16,7 @@ export class LoginService {
   private static _token: string
   private static _username: string
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private router: Router) {
     LoginService._token = ""
     LoginService._username = ""
   }
@@ -41,11 +42,30 @@ export class LoginService {
       })
   }
 
+  signup(username: string, password: string) {
+    console.log(`LoginService.login: Sending ${{"username": username, "password": password}}`)
+    console.log(username)
+    console.log(password)
+    this.http.post<any>(
+      `${environment.apiUrl}/signup`,
+      {"username": username, "password": password},
+      httpOptions
+    )
+      .pipe(catchError(LoginService.handleError))
+      .subscribe(data => {
+        console.log(`LoginService.signup: Authentication request successful.`)
+        //this.appComponent.LogIn()
+        return data
+      })
+    this.login(username, password)
+  }
+
   logout() {
     LoginService._token = ""
     LoginService._username = ""
     localStorage.setItem("loginToken", "")
     localStorage.setItem("username", "")
+    this.router.navigate(['/dashboard'])
   }
 
   private static handleError(error: HttpErrorResponse) {
