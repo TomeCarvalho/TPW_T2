@@ -40,3 +40,17 @@ input[type=number] {
   -moz-appearance:textfield; /* Firefox */
 }
 
+a {
+  color: green;
+  font-family: helvetica;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+a:active {
+  color: black;
+}
+

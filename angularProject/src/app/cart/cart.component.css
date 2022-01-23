@@ -1,14 +1,1 @@
-a {
-  color: green;
-  font-family: helvetica;
-  text-decoration: none;
-  text-transform: uppercase;
-}
 
-a:hover {
-  text-decoration: underline;
-}
-
-a:active {
-  color: black;
-}
