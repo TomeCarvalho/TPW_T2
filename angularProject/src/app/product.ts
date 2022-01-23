@@ -7,6 +7,6 @@ export interface Product {
   description: string;
   price: number;
   hidden: boolean;
-  seller: number;
+  seller: any;
   group: any[];
 }

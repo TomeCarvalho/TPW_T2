@@ -179,8 +179,15 @@ class Cart(APIView):
         return Response(ProductInstanceSerializer(product_instance_list, many=True).data, status=status.HTTP_200_OK)
 
     def post(self, request):
-        product_id = request.POST['product_id']
-        quantity = request.POST['quantity']
+        print("POST")
+        raw_data = request.read()
+        print(raw_data)
+        data = json.loads(raw_data)
+        if not data.get("product_id"):
+            return Response(status.HTTP_400_BAD_REQUEST)
+
+        product_id = data.get('product_id')
+        quantity = data.get('quantity')
         try:
             quantity = int(quantity)
         except ValueError:
@@ -282,8 +289,15 @@ class AddStock(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request):
-        product_id = request.POST['product_id']
-        quantity = request.POST['stock']
+        print("POST")
+        raw_data = request.read()
+        print(raw_data)
+        data = json.loads(raw_data)
+        if not data.get("product_id") and not data.get("stock"):
+            return Response(status.HTTP_400_BAD_REQUEST)
+
+        product_id = data.get('product_id')
+        quantity = data.get('stock')
         try:
             quantity = int(quantity)
         except ValueError:
@@ -310,13 +324,22 @@ class AddProductImage(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request):
+        print("POST")
+        raw_data = request.read()
+        print(raw_data)
+        data = json.loads(raw_data)
+        if not data.get("product_id") and not data.get("image"):
+            return Response(status.HTTP_400_BAD_REQUEST)
+
+        product_id = data.get('product_id')
+        image = data.get('image')
         try:
-            product = Product.objects.get(id=request.POST['product_id'])
+            product = Product.objects.get(id=product_id)
         except ObjectDoesNotExist:
             return Response(status.HTTP_404_NOT_FOUND)
         if product.seller != request.user:
             return Response(status.HTTP_403_FORBIDDEN)
-        ProductImage(url=request.POST['image'], product=product).save()
+        ProductImage(url=image, product=product).save()
         return Response(ProductSerializer(product).data, status=status.HTTP_200_OK)
 
 
@@ -326,15 +349,27 @@ class AddProductGroup(APIView):
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
+
+
     def post(self, request):
+
+        print("POST")
+        raw_data = request.read()
+        print(raw_data)
+        data = json.loads(raw_data)
+        if not data.get("product_id") and not data.get("group"):
+            return Response(status.HTTP_400_BAD_REQUEST)
+
+        product_id = data.get('product_id')
+        group = data.get('group')
+
         try:
-            product = Product.objects.get(id=request.POST['product_id'])
+            product = Product.objects.get(id=product_id)
         except ObjectDoesNotExist:
             return Response(status.HTTP_404_NOT_FOUND)
         if product.seller != request.user:
             return Response(status.HTTP_403_FORBIDDEN)
 
-        group = request.POST['group']
         if group in [grp.name for grp in Group.objects.all()]:
             real_group = Group.objects.get(name=group)
         else:
@@ -352,8 +387,18 @@ class ToggleProductVisibility(APIView):
     permission_classes = [permissions.IsAdminUser]
 
     def post(self, request):
+
+        print("POST")
+        raw_data = request.read()
+        print(raw_data)
+        data = json.loads(raw_data)
+        if not data.get("product_id"):
+            return Response(status.HTTP_400_BAD_REQUEST)
+
+        product_id = data.get('product_id')
+
         try:
-            product = Product.objects.get(id=request.POST['product_id'])
+            product = Product.objects.get(id=product_id)
         except ObjectDoesNotExist:
             return Response(status.HTTP_404_NOT_FOUND)
         product.hidden = not product.hidden
