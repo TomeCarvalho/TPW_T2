@@ -33,7 +33,7 @@
     <h3>{{ product.price }}€</h3>
     <h4>{{ product.stock }} in stock</h4>
     <p>Product ID: {{ num }}</p>
-    <p>Sold by {{ product.seller }}</p>
+    <p>Sold by {{ product.seller.username }}</p>
     <p>Category: {{ product.category }}</p>
     <p>{{ product.description }}</p>
     <div *ngIf="product.group">
@@ -43,15 +43,13 @@
     <div *ngIf="loginService.token(); else elseBlock">
       <div *ngIf="!product.hidden">
         <div *ngIf="user != product.seller; else elseBlock2">
-          <form method="post" action="/cart/">
+          <form [formGroup]="add_to_cartForm" (ngSubmit)="onAdd_to_cart(add_to_cartForm.value)">
             <div class="form-group">
-              <label for="inputQuantity" class="sr-only">Quantity</label>
+              <label for="quantity" class="sr-only">Quantity</label>
               <input class="form-control w-25 float-left mr-1" name="quantity" type="number" min="1"
                      max="{{ product.stock }}"
-                     placeholder="Quantity" aria-label="Quantity" id="inputQuantity">
-              <input name="product_id" class="d-none" type="number" value="{{ num }}">
-              <input name="page" class="d-none" value="product_page.html">
-              <button class="btn btn-primary" type="submit">
+                     placeholder="Quantity" aria-label="Quantity" id="quantity" formControlName="quantity">
+              <button class="btn btn-primary" type="submit" >
                 <i class="fa fa-cart-plus"></i>
                 Add to Cart
               </button>
@@ -59,39 +57,33 @@
           </form>
         </div>
         <ng-template #elseBlock2>
-          <form method="post" action="/add_product_stock/">
+          <form [formGroup]="addStockForm" (ngSubmit)="onAddStock(addStockForm.value)">
             <div class="form-group">
               <label for="stockQuantity" class="sr-only">Stock</label>
               <input class="form-control w-25 float-left mr-1" name="stock" type="number" min="1"
-                     placeholder="Stock to add" aria-label="stock" id="stockQuantity">
-              <input name="product_id" class="d-none" type="number" value="{{ num }}">
-              <input name="page" class="d-none" value="product_page.html">
-              <button class="btn btn-primary" type="submit">
+                     placeholder="Stock to add" aria-label="stock" id="stockQuantity" formControlName="stockQuantity">
+              <button class="btn btn-primary" type="submit" (click)="onAddStock(addStockForm.value)">
                 <i class="fa fa-arrow-circle-up"></i>
                 Add Stock
               </button>
             </div>
           </form>
-          <form method="post" action="/add_product_img/">
+          <form [formGroup]="addImgForm" (ngSubmit)="onAddImg(addImgForm.value)">
             <div class="form-group w-100">
               <label for="imageURL" class="sr-only">Image</label>
               <input class="form-control w-25 float-left mr-1" name="image" type="url"
-                     placeholder="Image URL" aria-label="image" id="imageURL">
-              <input name="product_id" class="d-none" type="number" value="{{ num }}">
-              <input name="page" class="d-none" value="product_page.html">
-              <button class="btn btn-primary" type="submit">
+                     placeholder="Image URL" aria-label="image" id="imageURL" formControlName="imageURL">
+              <button class="btn btn-primary" type="submit" >
                 <i class="fa fa-picture-o"></i>
                 Add Image
               </button>
             </div>
           </form>
-          <form method="post" action="/add_product_group/">
+          <form [formGroup]="addGroupForm" (ngSubmit)="onAddGroup(addGroupForm.value)">
             <div class="form-group">
               <label for="group" class="sr-only">Group</label>
               <input class="form-control w-25 float-left mr-1" name="group" type="text"
-                     placeholder="Group" aria-label="group" id="group">
-              <input name="product_id" class="d-none" type="number" value="{{ num }}">
-              <input name="page" class="d-none" value="product_page.html">
+                     placeholder="Group" aria-label="group" id="group" formControlName="group">
               <button class="btn btn-primary" type="submit">
                 <i class="fa fa-object-group"></i>
                 Add Group
@@ -101,8 +93,7 @@
         </ng-template>
       </div>
       <div *ngIf="is_superuser">
-        <form method="post" action="/toggle_product_visibility/">
-          <input name="product_id" class="d-none" type="number" value="{{ num }}">
+        <form (ngSubmit)="onToggleVis()">
           <button class="btn btn-primary" type="submit">
             <i class="fa {{ fa_icon }}"></i>
             {{ hidden_toggle_text }}
