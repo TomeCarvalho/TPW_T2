@@ -18,7 +18,10 @@ export class HistoryComponent implements OnInit {
       this.purchasesInfo = value
       console.log(value)
     })
-    this.historyService.getInfo('sales').subscribe(value => this.purchasesInfo = value)
+    this.historyService.getInfo('sales').subscribe(value => {
+      this.salesInfo = value
+      console.log(value)
+    })
   }
 
 }
