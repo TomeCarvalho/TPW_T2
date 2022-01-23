@@ -13,9 +13,11 @@ const httpOptions = {
 })
 export class LoginService {
   private static _token: string
+  private static _username: string
 
   constructor(private http: HttpClient) {
     LoginService._token = ""
+    LoginService._username = ""
   }
 
   login(username: string, password: string) {
@@ -30,7 +32,9 @@ export class LoginService {
       .pipe(catchError(LoginService.handleError))
       .subscribe(data => {
         LoginService._token = data.token
+        LoginService._username = username
         localStorage.setItem('loginToken', LoginService._token)
+        localStorage.setItem('username', LoginService._username)
         console.log(`LoginService.login: Authentication request successful.\nToken: ${LoginService._token}`)
         //this.appComponent.LogIn()
         return data
@@ -39,22 +43,28 @@ export class LoginService {
 
   logout() {
     LoginService._token = ""
+    LoginService._username = ""
     localStorage.setItem("loginToken", "")
+    localStorage.setItem("username", "")
   }
 
   private static handleError(error: HttpErrorResponse) {
     if (error.status === 0)
       // A client-side or network error occurred. Handle it accordingly.
-      console.error(`An error occurred: ${error.error}.`);
+      console.error(`An error occurred: ${error.error}.`)
     else
       // The backend returned an unsuccessful response code. The response body may contain clues as to what went wrong.
-      console.error(`Backend returned code ${error.status}, body was: ${error.error}.`);
+      console.error(`Backend returned code ${error.status}, body was: ${error.error}.`)
 
     // Return an observable with a user-facing error message.
-    return throwError(() => 'Whoops, something went wrong...');
+    return throwError(() => 'Whoops, something went wrong...')
+  }
+
+  public username(): string {
+    return String(localStorage.getItem("username"))
   }
 
   public token(): string {
-    return String(localStorage.getItem("loginToken"));
+    return String(localStorage.getItem("loginToken"))
   }
 }
