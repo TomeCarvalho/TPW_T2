@@ -12,6 +12,7 @@ class GroupSerializer(serializers.ModelSerializer):
 class ProductSerializer(serializers.ModelSerializer):
     images = serializers.StringRelatedField(many=True)
     group = GroupSerializer(many=True)
+    #seller = UserSerializer()
     class Meta:
         model = Product
         fields = '__all__'
@@ -31,6 +32,7 @@ class SaleSerializer(serializers.ModelSerializer):
 
 class ProductInstanceSerializer(serializers.ModelSerializer):
     product = ProductSerializer()
+    sale = SaleSerializer()
     class Meta:
         model = ProductInstance
         fields = '__all__'
@@ -42,7 +44,7 @@ UserModel = get_user_model()
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserModel
-        fields = '__all__'
+        fields = ('username', 'password')
 
     password = serializers.CharField(write_only=True)
 

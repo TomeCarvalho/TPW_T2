@@ -12,6 +12,8 @@ import { AppRoutingModule } from './app-routing.module';
 import { FilterComponent } from './filter/filter.component';
 import { CartComponent } from './cart/cart.component';
 import { ProductDetailsComponent } from './product-details/product-details.component';
+import { HistorytableComponent } from './historytable/historytable.component';
+import { HistoryComponent } from './history/history.component';
 
 
 @NgModule({
@@ -22,7 +24,9 @@ import { ProductDetailsComponent } from './product-details/product-details.compo
     MyNavbarComponent,
     FilterComponent,
     CartComponent,
-    ProductDetailsComponent
+    ProductDetailsComponent,
+    HistorytableComponent,
+    HistoryComponent
   ],
   imports: [
     BrowserModule,
