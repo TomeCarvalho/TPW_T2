@@ -82,8 +82,15 @@ class MyProducts(APIView):
         return Response(ProductSerializer(product_list, many=True).data, status=status.HTTP_200_OK)
 
     def post(self, request):
-        form = ProductForm(request.data)
+        print("POST PRODUCT")
+        raw_data = request.read()
+        print(raw_data)
+        data = json.loads(raw_data)
+        form = ProductForm(data)
+        print(form)
+
         if form.is_valid():
+            print("GOOD")
             category = form.cleaned_data['category']
             name = form.cleaned_data['name']
             stock = form.cleaned_data['stock']
@@ -240,13 +247,17 @@ class CartCheckout(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request):
-        form = PaymentForm(request.data)
+        raw_data = request.read()
+        # print(raw_data)
+        data = json.loads(raw_data)
+        form = PaymentForm(data)
         if form.is_valid():
             prod_insts = ProductInstance.objects.filter(client=request.user, sold=False)
             if any(prod_inst.quantity > prod_inst.product.stock for prod_inst in prod_insts):
                 return Response(status.HTTP_400_BAD_REQUEST)
             payment_method = form.cleaned_data['card']
             sale = Sale(client=request.user, paymentMethod=payment_method)
+            print(sale)
             sale.save()
             for prod_inst in prod_insts:
                 product = prod_inst.product
@@ -258,7 +269,7 @@ class CartCheckout(APIView):
             sale.save()
             return Response(status.HTTP_200_OK)
         else:
-            return Response(status.HTTP_400_BAD_REQUEST)
+            return Response(status.HTTP_400_BAD_REQUEST, )
 
 
 class PurchaseHistory(APIView):

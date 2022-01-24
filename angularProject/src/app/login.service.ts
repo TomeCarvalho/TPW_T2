@@ -37,7 +37,7 @@ export class LoginService {
         localStorage.setItem('loginToken', LoginService._token)
         localStorage.setItem('username', LoginService._username)
         console.log(`LoginService.login: Authentication request successful.\nToken: ${LoginService._token}`)
-        //this.appComponent.LogIn()
+        this.router.navigate(['/dashboard'])
         return data
       })
   }
@@ -54,6 +54,7 @@ export class LoginService {
       .pipe(catchError(LoginService.handleError))
       .subscribe(data => {
         console.log(`LoginService.signup: Authentication request successful.`)
+        console.log(data)
         //this.appComponent.LogIn()
         return data
       })

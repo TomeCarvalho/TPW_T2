@@ -14,6 +14,8 @@ import { CartComponent } from './cart/cart.component';
 import { ProductDetailsComponent } from './product-details/product-details.component';
 import { HistorytableComponent } from './historytable/historytable.component';
 import { HistoryComponent } from './history/history.component';
+import { PaymentformComponent } from './paymentform/paymentform.component';
+import { NewProductFormComponent } from './new-product-form/new-product-form.component';
 
 
 @NgModule({
@@ -26,7 +28,9 @@ import { HistoryComponent } from './history/history.component';
     CartComponent,
     ProductDetailsComponent,
     HistorytableComponent,
-    HistoryComponent
+    HistoryComponent,
+    PaymentformComponent,
+    NewProductFormComponent
   ],
   imports: [
     BrowserModule,
