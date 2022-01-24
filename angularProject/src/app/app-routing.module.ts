@@ -18,7 +18,8 @@ const routes: Routes = [
   {path: "cart", component: CartComponent},
   {path: "products/:num", component: ProductDetailsComponent},
   {path: "cart/checkout", component: PaymentformComponent},
-  {path: "newproduct", component: NewProductFormComponent}
+  {path: "newproduct", component: NewProductFormComponent},
+  {path: '**', redirectTo: 'dashboard'}
 ];
 
 @NgModule({

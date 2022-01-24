@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {ProductService} from "../product.service";
 import {Product} from "../product";
-import {ActivatedRoute} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 
 @Component({
   selector: 'app-listproducts',
@@ -14,12 +14,18 @@ export class ListproductsComponent implements OnInit {
   all_products: Product[] = [];
   source!: string;
 
-  constructor(private productService: ProductService, private route: ActivatedRoute) { }
+  constructor(private productService: ProductService, private route: ActivatedRoute, private router: Router) { }
 
   ngOnInit() {
 
     this.route.data.subscribe(value => {
       this.source = value['source']
+      console.log(this.source)
+      if( this.source == 'my-products' && localStorage.getItem('loginToken') == ''){
+        this.router.navigate(['dashboard'])
+        return
+      }
+
       let query = ""
       this.route.queryParamMap.subscribe(params =>{
         console.log(params)

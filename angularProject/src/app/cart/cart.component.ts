@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {Product} from "../product";
 import {ProductInstance} from "../product_instance";
 import {CartService} from "../cart.service";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-cart',
@@ -12,7 +13,11 @@ export class CartComponent implements OnInit {
 
   cart!: ProductInstance[];
 
-  constructor(private cartService: CartService) { }
+  constructor(private cartService: CartService, private router: Router) {
+    if(localStorage.getItem('loginToken') == ''){
+      router.navigate(['dashboard'])
+    }
+  }
 
   ngOnInit(): void {
     this.cartService.getCart().subscribe(value => {this.cart = value;console.log("CART"); console.log(this.cart)})

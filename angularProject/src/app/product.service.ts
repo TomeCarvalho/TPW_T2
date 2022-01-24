@@ -45,27 +45,37 @@ export class ProductService {
     return this.http.get<Product>(url, header);
   }
 
-  addProduct(product: Product){
-    console.log("Add Product")
-    let header = {};
-    if (this.loginService.token()){
-      header = {
-        headers: new HttpHeaders()
-          .set('Authorization',  `Token ${(this.loginService.token())}`)
+  addProduct(product: Product): Promise<boolean>{
+    console.log("CHECKOUT")
+    let promise = new Promise<boolean>((resolve, reject) => {
+      console.log("Add Product")
+      let header = {};
+      if (this.loginService.token()) {
+        header = {
+          headers: new HttpHeaders()
+            .set('Authorization', `Token ${(this.loginService.token())}`)
+        }
       }
-    }
-    this.http.post<any>(
-      `${environment.apiUrl}/my-products`,
-      product,
-      header
-    )
-      .pipe(catchError(ProductService.handleError))
-      .subscribe(data => {
-        console.log(`LoginService.signup: Authentication request successful.`)
-        console.log(data)
-        //this.appComponent.LogIn()
-        return data
-      })
+      this.http.post<any>(
+        `${environment.apiUrl}/my-products`,
+        product,
+        header
+      )
+        .pipe(catchError(ProductService.handleError))
+        .subscribe(data => {
+          console.log(`LoginService.signup: Authentication request successful.`)
+          console.log(data)
+          if (data == 400) {
+            console.log("BAD FALSE")
+            reject(false)
+          } else {
+            resolve(true)
+          }
+          //this.appComponent.LogIn()
+          return data
+        })
+    })
+    return promise;
   }
 
   getGroups(){
