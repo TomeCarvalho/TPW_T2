@@ -308,7 +308,7 @@ class AddStock(APIView):
             return Response(status.HTTP_400_BAD_REQUEST)
 
         product_id = data.get('product_id')
-        quantity = data.get('stock')
+        quantity = data.get('quantity')
         try:
             quantity = int(quantity)
         except ValueError:

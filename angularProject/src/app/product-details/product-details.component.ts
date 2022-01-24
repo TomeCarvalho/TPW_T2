@@ -38,6 +38,7 @@ export class ProductDetailsComponent implements OnInit {
   ngOnInit(): void {
     this.num = +this.route.snapshot.paramMap.get('num')!;
     this.getProduct();
+    console.log("USER: "+ this.user)
   }
 
   getProduct(): void {
@@ -57,21 +58,26 @@ export class ProductDetailsComponent implements OnInit {
   onAdd_to_cart(data: any): void {
     console.log(data.quantity)
     this.productService.add_to_cart(this.num, data.quantity)
+    this.router.navigate(['/cart']);
   }
 
   onAddStock(data: any): void {
     this.productService.addStock(this.num, data.stockQuantity)
+    this.getProduct();
   }
 
   onAddImg(data: any): void {
     this.productService.addImage(this.num, data.imageURL)
+    location.reload();
   }
 
   onAddGroup(data: any): void{
     this.productService.addGroup(this.num, data.group)
+    location.reload();
   }
 
   onToggleVis(): void {
     this.productService.toggleVisibility(this.num)
+    location.reload();
   }
 }
