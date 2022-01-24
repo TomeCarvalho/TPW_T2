@@ -79,9 +79,13 @@
       </div>
       <div *ngIf="is_superuser">
         <form (ngSubmit)="onToggleVis()">
-          <button class="btn btn-primary" type="submit">
-            <i class="fa {{ fa_icon }}"></i>
-            {{ hidden_toggle_text }}
+          <button *ngIf="product.hidden" class="btn btn-primary" type="submit">
+            <i class="fa fa-eye"></i>
+            Unhide Product
+          </button>
+          <button *ngIf="!product.hidden" class="btn btn-primary" type="submit">
+            <i class="fa fa-eye-slash"></i>
+            Hide Product
           </button>
         </form>
       </div>

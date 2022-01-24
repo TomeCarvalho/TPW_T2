@@ -68,16 +68,19 @@ export class ProductDetailsComponent implements OnInit {
 
   onAddImg(data: any): void {
     this.productService.addImage(this.num, data.imageURL)
-    location.reload();
+    this.product.images.push(data.imageURL)
   }
 
   onAddGroup(data: any): void{
     this.productService.addGroup(this.num, data.group)
-    location.reload();
+    this.product.group.push({name: data.group})
   }
 
   onToggleVis(): void {
     this.productService.toggleVisibility(this.num)
-    location.reload();
+    this.product.hidden = !this.product.hidden
+    this.fa_icon = (this.product?.hidden ? 'fa-eye' : 'fa-eye-slash');
+    this.hidden_toggle_text = (this.product?.hidden ? 'Unhide Product' : 'Hide Product');
+    //location.reload();
   }
 }
