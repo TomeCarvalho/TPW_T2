@@ -36,11 +36,11 @@ Install the requirements
 
 **Application Execution**
 
-Run the application
+Run the application (inside the djangoProject directory)
 
 `python .\manage.py runserver`
 
-
+Default port: 8000
 
 ### API Endpoints
 
@@ -63,3 +63,21 @@ Note: All of the following endpoints are prefixed by `ws/`.
 | `add-product-group`         | **POST**: Adds a group to a user's product. *Requires login.* |
 | `toggle-product-visibility` | **POST**: Toggles the visibility of a product. *Requires login as an administrator.* |
 | `superuser`                 | **GET**: Returns whether logged user is superuser. *Requires login* |
+
+
+
+## Angular Web Application
+
+**Prerequisites:** 
+
+Typescript and Angular CLI Modules
+Installation:
+\+ in an admin command line, run the following command:
+--+ npm install -g typescript
+--+ npm install –g @angular/cli
+
+Run the application (inside the angularProject directory)
+
+`ng serve`
+
+Default port: 4200
