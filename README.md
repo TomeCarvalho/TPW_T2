@@ -62,3 +62,4 @@ Note: All of the following endpoints are prefixed by `ws/`.
 | `add-product-img`           | **POST**: Adds an image to a user's product. *Requires login.* |
 | `add-product-group`         | **POST**: Adds a group to a user's product. *Requires login.* |
 | `toggle-product-visibility` | **POST**: Toggles the visibility of a product. *Requires login as an administrator.* |
+| `superuser`                 | **GET**: Returns whether logged user is superuser. *Requires login* |
