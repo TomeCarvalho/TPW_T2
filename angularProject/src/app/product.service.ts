@@ -45,6 +45,19 @@ export class ProductService {
     return this.http.get<Product>(url, header);
   }
 
+  isSuperuser(): Observable<any> {
+    const url = this.baseURL + "superuser";
+    let header = {};
+    if (this.loginService.token()){
+      header = {
+
+        headers: new HttpHeaders()
+          .set('Authorization',  `Token ${(this.loginService.token())}`)
+      }
+    }
+    return this.http.get<any>(url, header);
+  }
+
   addProduct(product: Product): Promise<boolean>{
     console.log("CHECKOUT")
     let promise = new Promise<boolean>((resolve, reject) => {

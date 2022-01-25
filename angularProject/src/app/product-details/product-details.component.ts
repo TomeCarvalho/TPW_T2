@@ -17,7 +17,7 @@ export class ProductDetailsComponent implements OnInit {
   fa_icon: string | undefined;
   hidden_toggle_text: string | undefined;
   user: any = localStorage.getItem("username");
-  is_superuser: boolean = true;
+  is_superuser: boolean = false;
   num!: number;
   add_to_cartForm = this.formBuilder.group({
     "quantity": ''
@@ -38,6 +38,7 @@ export class ProductDetailsComponent implements OnInit {
   ngOnInit(): void {
     this.num = +this.route.snapshot.paramMap.get('num')!;
     this.getProduct();
+    this.isSuperuser();
     console.log("USER: "+ this.user)
   }
 
@@ -53,6 +54,14 @@ export class ProductDetailsComponent implements OnInit {
       this.fa_icon = (this.product?.hidden ? 'fa-eye' : 'fa-eye-slash');
       this.hidden_toggle_text = (this.product?.hidden ? 'Unhide Product' : 'Hide Product');
     });
+  }
+
+  isSuperuser(): void {
+    this.productService.isSuperuser().subscribe(user =>{
+      console.log("UUUUUUUU")
+      console.log(user)
+      if(user) this.is_superuser = true;
+    })
   }
 
   onAdd_to_cart(data: any): void {

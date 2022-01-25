@@ -26,14 +26,16 @@ def signup(request):
         return Response(serialized.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class TestToken(APIView):
+class SuperUser(APIView):
     """Test: Return OK status if logged in (using token in auth header)."""
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
-        print(f'{request.user = }')
-        return Response(status.HTTP_200_OK)
+        try:
+            return Response(request.user.is_superuser, status=status.HTTP_200_OK)
+        except ObjectDoesNotExist:
+            return Response(status.HTTP_404_NOT_FOUND)
 
 
 class ProductView(APIView):
