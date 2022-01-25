@@ -15,12 +15,13 @@ const httpOptions = {
 })
 export class ProductService {
 
-  private baseURL = 'http://localhost:8000/ws/'
+  private baseURL = `${environment.apiUrl}`
 
   constructor(private http: HttpClient, private loginService: LoginService) { }
 
   getProducts(source: string, query: string): Observable<Product[]>{
     const url = this.baseURL + source + query;
+    console.log(url)
     let header = {};
     if (this.loginService.token()){
       header = {

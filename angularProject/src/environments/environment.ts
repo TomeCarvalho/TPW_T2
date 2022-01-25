@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  apiUrl: 'http://afonsorcampos1.pythonanywhere.com/ws'
+  apiUrl: 'http://afonsorcampos1.pythonanywhere.com/ws/'
 };
 
 /*

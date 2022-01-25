@@ -3,13 +3,14 @@ import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {LoginService} from "./login.service";
 import {Observable} from "rxjs";
 import {ProductInstance} from "./product_instance";
+import {environment} from "../environments/environment";
 
 @Injectable({
   providedIn: 'root'
 })
 export class CartService {
 
-  private baseURL = 'http://localhost:8000/ws/'
+  private baseURL = `${environment.apiUrl}`
 
   constructor(private http: HttpClient, private loginService: LoginService) { }
 
